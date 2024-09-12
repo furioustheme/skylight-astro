@@ -1,7 +1,7 @@
 <h1 align=center>Skylight Astro</h1>
 <p align=center>Complete Website Solution for SaaS and Startup Businesses.
 </p>
-<h2 align="center"> <a target="_blank" href="https://skylight-astro.netlify.app/" rel="nofollow">👀Demo</a> | <a  target="_blank" href="https://pagespeed.web.dev/analysis/https-skylight-astro-netlify-app/k6i0m8ojtg?form_factor=desktop">Page Speed (100%)🚀</a>
+<h2 align="center"> <a target="_blank" href="https://furioustheme-skylight-astro.netlify.app/" rel="nofollow">👀Demo</a> | <a  target="_blank" href="https://pagespeed.web.dev/analysis/https-furioustheme-skylight-astro-netlify-app/0dlofasiva?form_factor=desktop">Page Speed (100%)🚀</a>
 </h2>
 
 [![skylight-astro](https://furioustheme.com/products/skylight.png)](https://furioustheme-skylight-astro.netlify.app/)
