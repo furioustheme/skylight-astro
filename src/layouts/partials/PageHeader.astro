@@ -1,0 +1,20 @@
+---
+import Breadcrumbs from "@/components/Breadcrumbs.astro";
+import { humanize } from "@/lib/utils/textConverter";
+
+const { title = "" }: { title?: string } = Astro.props;
+---
+
+<section class="mx-4">
+  <div class="bg-shape-top-right">
+    <div class="container py-16 z-10 relative">
+      <h2
+        class="h1 text-center text-5xl md:text-6xl leading-[55px] md:leading-[76px] pb-4"
+        data-aos="fade-up"
+        set:text={humanize(title)}
+      />
+
+      <Breadcrumbs className="mt-6" />
+    </div>
+  </div>
+</section>

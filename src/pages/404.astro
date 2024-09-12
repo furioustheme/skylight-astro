@@ -1,0 +1,45 @@
+---
+import config from "@/config/config.json";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import Base from "@/layouts/Base.astro";
+import {
+  getLangFromUrl,
+  slugSelector,
+  supportedLang,
+} from "@/lib/utils/languageParser";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+
+let lang = getLangFromUrl(Astro.url);
+
+const disabledLanguages = config.settings.disable_languages as string[];
+if (disabledLanguages.includes(lang)) {
+  lang = config.settings.default_language;
+}
+---
+
+<Base title="Page Not Found">
+  <section class="section-sm text-center bg-theme-light">
+    <div class="container">
+      <div class="row justify-center">
+        <h1 class="h2 font-bold text-primary mb-3">oops!</h1>
+        <h2 class="h3 font-medium text-slate-600 mb-6">Page not found</h2>
+        <img src="/images/error-img.png" alt="error-img" class="max-w-xl" />
+        <div class="inline-block mt-8">
+          <a
+            class="btn btn-primary w-fit mx-auto"
+            href={slugSelector("/", lang)}
+          >
+            Back To Home
+            <ArrowSVG />
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

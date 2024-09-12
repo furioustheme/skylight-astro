@@ -1,0 +1,165 @@
+---
+import Base from "@/layouts/Base.astro";
+import CareerCard from "@/layouts/helpers/CareerCard";
+import { getSinglePage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import ContactSection from "@/partials/ContactSection.astro";
+import PageHeader from "@/partials/PageHeader.astro";
+import { Icon } from "astro-icon/components";
+import type { ContentEntryMap } from "astro:content";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLang.map(async (lang) => {
+      const careers = await getSinglePage(
+        "careers",
+        lang as keyof ContentEntryMap,
+      );
+
+      return careers.map((career) => ({
+        params: {
+          lang: lang || undefined,
+          single: career.slug.split("/").pop(),
+        },
+        props: {
+          career,
+        },
+      }));
+    }),
+  );
+  return paths.flat();
+}
+
+const { career } = Astro.props;
+const { title, meta_title, description, image } = career.data;
+const { Content } = await career.render();
+
+const { lang } = Astro.params;
+
+const careers = await getSinglePage("careers", lang as keyof ContentEntryMap);
+
+// Filter similar careers by department
+const similarCareers = careers.filter(
+  (item) =>
+    item.data.department &&
+    item.data.department.includes(career.data.department[0]) &&
+    item.slug !== career.slug,
+);
+---
+
+<Base
+  title={title}
+  meta_title={meta_title}
+  description={description}
+  image={image}
+>
+  <PageHeader title={title} />
+
+  <section class="section pb-0">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="lg:col-10">
+          <div class="row g-4">
+            <div class="lg:col-8">
+              <div class="content">
+                <Content />
+              </div>
+            </div>
+            <div class="lg:col-4">
+              <div class="bg-theme-light p-5 sm:p-10">
+                <h5 class="border-b border-border pb-4 font-semibold">
+                  Job Details
+                </h5>
+                <div class="flex gap-5 py-5">
+                  <Icon name="careers/department" width="24" height="24" />
+                  <div>
+                    <h6 class="font-semibold pb-2">Department</h6>
+                    <p
+                      class="text-dark"
+                      set:html={markdownify(career?.data.title)}
+                    />
+                  </div>
+                </div>
+                <div class="flex gap-5 py-5">
+                  <Icon name="careers/jobType" width="24" height="24" />
+
+                  <div>
+                    <h6 class="font-semibold pb-2">Job Type</h6>
+                    <p
+                      class="text-dark"
+                      set:html={markdownify(career?.data.duration)}
+                    />
+                  </div>
+                </div>
+                <div class="flex gap-5 py-5">
+                  <Icon
+                    name="careers/location"
+                    width="30"
+                    height="30"
+                    class="-mt-1"
+                  />
+
+                  <div>
+                    <h6 class="font-semibold pb-2">Location</h6>
+                    <p
+                      class="text-dark"
+                      set:html={markdownify(career?.data.location)}
+                    />
+                  </div>
+                </div>
+                <div class="flex gap-5 py-5">
+                  <Icon name="careers/salary" width="24" height="24" />
+
+                  <div>
+                    <h6 class="font-semibold pb-2">Salary</h6>
+                    <p
+                      class="text-dark"
+                      set:html={markdownify(career?.data.salary)}
+                    />
+                  </div>
+                </div>
+                <button
+                  class="btn btn-primary bg-primary border-primary hover:border-black w-full mt-5"
+                >
+                  Apply For This Job
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <ContactSection />
+
+  <section class="section pb-0">
+    <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+      <div class="container relative z-10">
+        <h1 class="pb-14 text-center">
+          Related
+          <strong>jobs openings</strong>
+        </h1>
+        <div class="row g-4">
+          {
+            similarCareers.map((job: { slug: string }) => {
+              const slugParts = job.slug.split("/");
+              slugParts[0] = "";
+              const modifiedSlug = slugParts.join("/");
+              job.slug = modifiedSlug;
+              return (
+                <div class="lg:col-6">
+                  <CareerCard job={job} lang={lang as keyof ContentEntryMap} />
+                </div>
+              );
+            })
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CallToAction />
+</Base>

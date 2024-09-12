@@ -1,0 +1,147 @@
+---
+import Logo from "@/components/Logo.astro";
+import Social from "@/components/Social.astro";
+import config from "@/config/config.json";
+import social from "@/config/social.json";
+import EmailIconSVG from "@/helpers/svg/EmailIconSVG";
+import LocationIconSVG from "@/helpers/svg/LocationIconSVG";
+import PhoneIconSVG from "@/helpers/svg/PhoneIconSVG";
+import { getLangFromUrl, getTranslations } from "@/lib/utils/languageParser";
+import { humanize, markdownify } from "@/lib/utils/textConverter";
+import type { MenuItem } from "@/types";
+import type { ContentEntryMap } from "astro:content";
+
+const lang = getLangFromUrl(Astro.url);
+const menu = await getTranslations(lang as keyof ContentEntryMap);
+let footer: any = [];
+if (menu) {
+  footer = menu.footer;
+}
+
+const footerMenuItems = footer.map((item: MenuItem) => Object.keys(item)[0]);
+---
+
+<footer class="bg-dark">
+  <div class="container py-20 lg:py-24 2xl:py-32 border-b border-white/30">
+    <div class="row justify-between g-4">
+      <div class="sm:col-6 lg:col-3">
+        <div class="pb-6 md:pb-8 lg:pb-0">
+          <Logo src="/images/footer-logo.png" />
+          <div class="text-white/80">
+            <p class="pb-8">
+              We ara a lorem ipsum dolor sit amet, consectetur adipiscing elit,
+              sed do eiusmod tempor incididunt ut labore
+            </p>
+            <div class="grid gap-4">
+              <a
+                href="tel:123-456-7890"
+                target="_blank"
+                class="flex gap-2 hover:text-primary transition duration-300"
+              >
+                <PhoneIconSVG />
+                310-437-2766
+              </a>
+              <a
+                href="mailto:unreal@outlook.com"
+                target="_blank"
+                class="flex gap-2 hover:text-primary transition duration-300"
+              >
+                <EmailIconSVG />
+                unreal@outlook.com
+              </a>
+              <a
+                href="https://maps.app.goo.gl/JFJ8EJD6vCQinycX9"
+                target="_blank"
+                class="flex gap-2 hover:text-primary transition duration-300"
+              >
+                <LocationIconSVG />
+                706 Campfire Ave. Meriden, CT 06450
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sm:col-3 lg:col-2 text-white/80">
+        <div class="pb-6 md:pb-8 lg:pb-0 pt-3 lg:w-fit lg:mx-auto">
+          <h6 class="pb-4 md:pb-6 text-white capitalize">
+            {humanize(footerMenuItems[0])}
+          </h6>
+          <ul class="grid gap-2 md:gap-4">
+            {
+              footer[0][footerMenuItems[0]]?.map((item: MenuItem) => (
+                <li>
+                  <a
+                    href={item.url}
+                    class="hover:text-primary transition duration-300"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+      <div class="sm:col-3 lg:col-2 text-white/80">
+        <div class="pb-6 md:pb-8 lg:pb-0 pt-3 lg:w-fit lg:mx-auto">
+          <h6 class="pb-4 md:pb-6 text-white capitalize">
+            {humanize(footerMenuItems[1])}
+          </h6>
+          <ul class="grid gap-2 md:gap-4">
+            {
+              footer[1][footerMenuItems[1]]?.map((item: MenuItem) => (
+                <li>
+                  <a
+                    href={item.url}
+                    class="hover:text-primary transition duration-300"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+      <div class="sm:col-6 lg:col-2 text-white/80">
+        <div class="pb-6 md:pb-8 lg:pb-0 pt-3 lg:w-fit lg:mx-auto">
+          <h6 class="pb-4 md:pb-6 text-white capitalize">
+            {humanize(footerMenuItems[2])}
+          </h6>
+          <ul class="grid gap-2 md:gap-4">
+            {
+              footer[2][footerMenuItems[2]]?.map((item: MenuItem) => (
+                <li>
+                  <a
+                    href={item.url}
+                    class="hover:text-primary transition duration-300"
+                  >
+                    {item.name}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+      <div class="sm:col-6 lg:col-3 text-white/80">
+        <div class="md:pb-8 lg:pb-0 pt-3">
+          <h6 class="pb-4 md:pb-6 text-white">Social Media</h6>
+          <p>
+            Be the first one to know about discounts, offers, news, giveaways
+            and events
+          </p>
+          <Social source={social.main} className="social-icons pt-5" />
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="py-7">
+    <div class="copyright">
+      <p
+        class="text-sm text-white/80"
+        set:html={markdownify(config.params.copyright)}
+      />
+    </div>
+  </div>
+</footer>

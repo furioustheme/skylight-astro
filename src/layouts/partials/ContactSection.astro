@@ -1,0 +1,108 @@
+---
+import Social from "@/components/Social.astro";
+import config from "@/config/config.json";
+import social from "@/config/social.json";
+import DynamicIcon from "@/helpers/DynamicIcon";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const contact = await getListPage("contact", lang as keyof ContentEntryMap);
+
+const { contact_form_action }: { contact_form_action: string } = config.params;
+const { contact_section } = contact[0].data;
+---
+
+<section class="section pb-0">
+  <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+    <div class="container z-10 relative">
+      <div class="row g-4 justify-between items-center">
+        <div
+          class="md:col-6 lg:col-7 xl:col-6"
+          data-aos="fade-right"
+          data-aos-delay="50"
+        >
+          <form
+            action={contact_form_action}
+            method="POST"
+            class="border border-primary rounded-lg bg-body px-5 lg:px-10 py-14"
+          >
+            <div class="row g-4 mb-8">
+              {
+                contact_section?.form?.fields?.map((field) => (
+                  <div class="lg:col-6">
+                    <label
+                      class="form-label"
+                      for="name"
+                      set:html={markdownify(field.label)}
+                    />
+                    <input
+                      type={field.type as any}
+                      id={field.id}
+                      placeholder={field.placeholder}
+                      class="form-input border border-border bg-theme-light"
+                    />
+                  </div>
+                ))
+              }
+            </div>
+            <div class="mb-8">
+              <label class="form-label" for="message">Message</label>
+              <textarea
+                name="message"
+                id="message"
+                placeholder="Hey! I Would Like To Get In Touch Because......."
+                class="form-input border border-border bg-theme-light h-44"
+              ></textarea>
+            </div>
+            <button class="btn btn-primary w-full">
+              {contact_section.form.submit_button.text}
+              <ArrowSVG />
+            </button>
+          </form>
+        </div>
+
+        <div
+          class="md:col-6 lg:col-5 pt-10 md:pt-0"
+          data-aos="fade-left"
+          data-aos-delay="50"
+        >
+          <h2
+            class="pb-4"
+            set:html={markdownify(contact_section?.contact_info.title)}
+          />
+          <p
+            set:html={markdownify(contact_section?.contact_info.description)}
+          />
+          <div class="my-10">
+            <Social source={social.main} className="social-icons-secondary" />
+          </div>
+          <div>
+            {
+              contact_section.contact_info.contact_details.map((detail) => (
+                <div class="flex gap-4 pb-6">
+                  <DynamicIcon icon={detail.icon} className="text-2xl" />
+                  <div>
+                    <h4
+                      class="font-medium text-2xl pb-2"
+                      set:html={detail.title}
+                    />
+                    <a
+                      href={detail.link}
+                      target="_blank"
+                      class="hover:text-primary transition duration-300"
+                    >
+                      {detail.value}
+                    </a>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

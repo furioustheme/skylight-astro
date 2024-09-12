@@ -1,0 +1,383 @@
+---
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import BusinessSVG from "@/helpers/svg/BusinessSVG";
+import CheckedSVG from "@/helpers/svg/CheckedSVG";
+import PricingArrowSVG from "@/helpers/svg/PricingArrowSVG";
+import StarterSVG from "@/helpers/svg/StarterSVG";
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { pricing_plan_section } = homepage[0].data;
+
+const pricingIndex = await getListPage(
+  "pricing",
+  lang as keyof ContentEntryMap,
+);
+const { pricing_plans } = pricingIndex[0].data;
+
+// Filter out plans where the title includes 'Free' in both monthly_plans and yearly_plans
+const filteredMonthlyPlans = pricing_plans?.monthly_plans.filter(
+  (plan: any) => !plan.title.toLowerCase().includes("free"),
+);
+const filteredYearlyPlans = pricing_plans?.yearly_plans.filter(
+  (plan: any) => !plan.title.toLowerCase().includes("free"),
+);
+---
+
+{
+  pricing_plan_section.enable && (
+    <section class="section pb-0 mx-4">
+      <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+        <div class="container z-10 relative">
+          <div
+            class="row g-4 justify-between tab"
+            data-tab-group="tab-group-name"
+          >
+            <div class="xl:col-4 relative" data-aos="fade-right">
+              <p
+                class="text-primary pb-3 text-center md:text-left"
+                set:html={markdownify(pricing_plan_section.subtitle)}
+              />
+              <h2
+                class="h1 pb-4 text-center md:text-left"
+                set:html={markdownify(pricing_plan_section.title)}
+              />
+              <p
+                class="pb-10 text-center md:text-left"
+                set:html={markdownify(pricing_plan_section.description)}
+              />
+              <div
+                class="flex items-center mx-auto gap-5 pt-0 pb-14 border-none tab-nav md:mx-0"
+                data-tab-nav=""
+              >
+                <div>
+                  <input
+                    type="radio"
+                    name="group-a"
+                    class="toggler-switcher-m hidden"
+                    value="monthly"
+                    id="monthly-1"
+                  />
+                  <label
+                    class="btn btn-outline-primary border-primary hover:bg-primary text-primary bg-white tab-nav-item active mx-0"
+                    for="monthly-1"
+                    tabindex="0"
+                    data-tab="0"
+                  >
+                    Monthly
+                  </label>
+                </div>
+                <div>
+                  <input
+                    type="radio"
+                    name="group-a"
+                    class="toggler-switcher-y hidden"
+                    value="annualy"
+                    id="annualy-1"
+                  />
+                  <label
+                    class="btn btn-outline-primary border-primary hover:bg-primary text-primary bg-white tab-nav-item mx-0"
+                    for="annualy-1"
+                    tabindex="-1"
+                    data-tab="1"
+                  >
+                    Yearly
+                  </label>
+                </div>
+              </div>
+              <div class="absolute bottom-14 left-40 z-[-1] hidden xl:block">
+                <PricingArrowSVG />
+              </div>
+            </div>
+
+            <div class="xl:col-7 tab-content mt-0" data-tab-content>
+              <div class="tab-content-panel active" data-tab-panel="0">
+                <div class="row g-4 justify-center">
+                  {filteredMonthlyPlans.map((plan: any) => (
+                    <div class="md:col-6 max-w-lg">
+                      <div
+                        class="bg-white border border-border hover:border-primary rounded-lg"
+                        data-tab-panel="0"
+                      >
+                        <div class="p-5 md:p-10">
+                          <div class="flex items-center justify-between mb-5">
+                            <div class="w-14 h-14 rounded-full bg-theme-light p-2 flex items-center justify-center">
+                              {plan.is_popular ? (
+                                <BusinessSVG />
+                              ) : (
+                                <StarterSVG />
+                              )}
+                            </div>
+                            {plan.is_popular && (
+                              <p class="text-primary bg-theme-light px-2 py-1 rounded border border-primary float-right">
+                                Most Popular
+                              </p>
+                            )}
+                          </div>
+
+                          <p
+                            class="text-xl font-medium text-primary pb-2"
+                            set:html={markdownify(plan?.title)}
+                          />
+                          <div class="flex items-center gap-2 pb-5">
+                            <h2 class="h1">
+                              {plan.currency}
+                              <span
+                                class="data-count"
+                                data-count-monthly={plan.price.monthly}
+                                data-count-annually={plan.price.annually}
+                              >
+                                {plan.price.monthly}
+                              </span>
+                            </h2>
+                            <h5 class="text-text font-medium">/mth</h5>
+                          </div>
+                          <p set:html={markdownify(plan?.description)} />
+                        </div>
+                        <div class="p-5 pb-8 md:p-10 border-t border-border">
+                          <ul class="mb-8 row g-3">
+                            {plan?.features?.map((feature: any) => (
+                              <li class="flex items-center gap-2">
+                                <CheckedSVG />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                          <div class="inline-block">
+                            <a
+                              class="btn btn-outline-primary sm:px-2 xl:px-5"
+                              href="#?"
+                            >
+                              {plan?.button_text}
+                              <ArrowSVG />
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div class="tab-content-panel" data-tab-panel="1">
+                <div class="row g-4 justify-center">
+                  {filteredYearlyPlans.map((plan: any) => (
+                    <div class="md:col-6   max-w-lg">
+                      <div
+                        class="bg-white border border-border hover:border-primary rounded-lg"
+                        data-tab-panel="0"
+                      >
+                        <div class="p-5 md:p-10">
+                          <div class="flex items-center justify-between mb-5">
+                            <div class="w-14 h-14 rounded-full bg-theme-light p-2 flex items-center justify-center">
+                              {plan.is_popular ? (
+                                <BusinessSVG />
+                              ) : (
+                                <StarterSVG />
+                              )}
+                            </div>
+                            {plan.is_popular && (
+                              <p class="text-primary bg-theme-light px-2 py-1 rounded border border-primary float-right">
+                                Most Popular
+                              </p>
+                            )}
+                          </div>
+
+                          <p
+                            class="text-xl font-medium text-primary pb-2"
+                            set:html={markdownify(plan?.title)}
+                          />
+                          <div class="flex items-center gap-2 pb-5">
+                            <h2 class="h1">
+                              {plan.currency}
+                              <span
+                                class="data-count"
+                                data-count-monthly={plan.price.monthly}
+                                data-count-annually={plan.price.annually}
+                              >
+                                {plan.price.monthly}
+                              </span>
+                            </h2>
+                            <h5 class="text-text font-medium">/mth</h5>
+                          </div>
+                          <p set:html={markdownify(plan?.description)} />
+                        </div>
+                        <div class="p-5 pb-8 md:p-10 border-t border-border">
+                          <ul class="mb-8 row g-3">
+                            {plan?.features?.map((feature: any) => (
+                              <li class="flex items-center gap-2">
+                                <CheckedSVG />
+                                {feature}
+                              </li>
+                            ))}
+                          </ul>
+                          <div class="inline-block">
+                            <a
+                              class="btn btn-outline-primary sm:px-2 xl:px-5"
+                              href="#?"
+                            >
+                              {plan?.button_text}
+                              <ArrowSVG />
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<script>
+  // astro:page-load event is fired when the page is loaded
+  document.addEventListener("astro:page-load", () => {
+    // ########################## Tab ##########################
+    function setActiveTab(tabGroup: HTMLElement, tabName: string) {
+      const tabsNav = tabGroup.querySelector("[data-tab-nav]") as HTMLElement;
+      const tabsContent = tabGroup.querySelector(
+        "[data-tab-content]",
+      ) as HTMLElement;
+
+      tabsNav.querySelectorAll("[data-tab]").forEach((tabNavItem) => {
+        (tabNavItem as HTMLElement).classList.remove("active");
+      });
+      tabsContent.querySelectorAll("[data-tab-panel]").forEach((tabPane) => {
+        (tabPane as HTMLElement).classList.remove("active");
+      });
+
+      const selectedTabNavItem = tabsNav.querySelector(
+        `[data-tab="${tabName}"]`,
+      ) as HTMLElement;
+      selectedTabNavItem.classList.add("active");
+
+      const selectedTabPane = tabsContent.querySelector(
+        `[data-tab-panel="${tabName}"]`,
+      ) as HTMLElement;
+      selectedTabPane.classList.add("active");
+    }
+
+    const tabGroups = document.querySelectorAll(
+      "[data-tab-group]",
+    ) as NodeListOf<HTMLElement>;
+    tabGroups.forEach((tabGroup) => {
+      const tabsNav = tabGroup.querySelector("[data-tab-nav]") as HTMLElement;
+      const tabsNavItem = tabsNav.querySelectorAll(
+        "[data-tab]",
+      ) as NodeListOf<HTMLElement>;
+      const activeTabName = tabsNavItem[0].getAttribute("data-tab") as string;
+
+      setActiveTab(tabGroup, activeTabName);
+
+      tabsNavItem.forEach((tabNavItem) => {
+        tabNavItem.addEventListener("click", () => {
+          const tabName = (tabNavItem as HTMLElement).dataset.tab as string;
+          setActiveTab(tabGroup, tabName);
+        });
+      });
+    });
+
+    const tablist = document.querySelectorAll(
+      "[data-tab-nav] [data-tab]",
+    ) as NodeListOf<HTMLElement>;
+    function tabsHandler(this: HTMLElement, event: KeyboardEvent) {
+      const index = Array.from(tablist).indexOf(this);
+      const numbTabs = tablist.length;
+      let nextId: HTMLElement;
+
+      if (numbTabs > 1) {
+        if (event.key === "ArrowRight") {
+          nextId = tablist[(index + 1) % numbTabs];
+          if (index === numbTabs - 1) {
+            nextId = tablist[0];
+          }
+          nextId.focus();
+          nextId.click();
+        }
+        if (event.key === "ArrowLeft") {
+          nextId = tablist[(index - 1 + numbTabs) % numbTabs];
+          if (index === 0) {
+            nextId = tablist[numbTabs - 1];
+          }
+          nextId.focus();
+          nextId.click();
+        }
+      }
+    }
+
+    tablist.forEach(function (tab) {
+      tab.addEventListener("keydown", tabsHandler);
+    });
+  });
+</script>
+
+<script>
+  // astro:page-load event is fired when the page is loaded
+  document.addEventListener("astro:page-load", () => {
+    function pricingInit() {
+      const toggleSwitcherM = document.querySelector(
+        ".toggler-switcher-m",
+      ) as HTMLInputElement | null;
+      const toggleSwitcherY = document.querySelector(
+        ".toggler-switcher-y",
+      ) as HTMLInputElement | null;
+      const number = document.querySelector(
+        ".data-count",
+      ) as HTMLElement | null;
+
+      function animText(ele: HTMLInputElement, status: "monthly" | "yearly") {
+        const dataCountElements = document.querySelectorAll(
+          ".data-count",
+        ) as NodeListOf<HTMLElement>;
+
+        dataCountElements.forEach((element) => {
+          if (status === "yearly" && element.dataset.countAnnually) {
+            element.innerHTML = element.dataset.countAnnually;
+            let counter = 0;
+            const targetCount = parseInt(element.textContent || "0");
+
+            const animation = setInterval(() => {
+              counter += 10;
+              element.textContent = Math.ceil(counter).toString();
+              if (counter >= targetCount) {
+                clearInterval(animation);
+                element.textContent = element.dataset.countAnnually!;
+              }
+            }, 1);
+          } else if (status === "monthly" && element.dataset.countMonthly) {
+            element.innerHTML = element.dataset.countMonthly;
+            let counter = 0;
+            const targetCount = parseInt(element.textContent || "0");
+
+            const animation = setInterval(() => {
+              counter += 10;
+              element.textContent = Math.ceil(counter).toString();
+              if (counter >= targetCount) {
+                clearInterval(animation);
+                element.textContent = element.dataset.countMonthly!;
+              }
+            }, 1);
+          }
+        });
+      }
+
+      toggleSwitcherM?.addEventListener("change", function () {
+        animText(this, "monthly");
+      });
+
+      toggleSwitcherY?.addEventListener("change", function () {
+        animText(this, "yearly");
+      });
+    }
+
+    pricingInit();
+  });
+</script>

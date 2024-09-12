@@ -1,0 +1,77 @@
+---
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import dateFormat from "@/lib/utils/dateFormat";
+import { getLangFromUrl, slugSelector } from "@/lib/utils/languageParser";
+import { humanize, markdownify, slugify } from "@/lib/utils/textConverter";
+import { FaCalendar } from "react-icons/fa6";
+import ImageMod from "./ImageMod.astro";
+
+const lang = getLangFromUrl(Astro.url);
+const { featuredPost } = Astro.props;
+const { title, image, date, author, categories } = featuredPost.data;
+
+const slugParts = featuredPost.slug.split("/");
+slugParts[0] = "blog";
+const modifiedSlug = slugParts.join("/");
+featuredPost.slug = modifiedSlug;
+---
+
+<section class="mx-5">
+  <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+    <div class="container relative z-10">
+      <div class="row g-4 xl:gx-5 justify-between items-center">
+        <div class="lg:col-6" data-aos="fade-right">
+          <img src={image} alt={title} class="w-full rounded-xl" />
+        </div>
+        <div class="lg:col-6" data-aos="fade-left">
+          <div class="flex items-center flex-wrap gap-2 sm:gap-5 pb-5">
+            {
+              categories.slice(0, 1).map((category: string, index: number) => (
+                <a
+                  class="bg-secondary text-dark/80 hover:text-primary transition duration-300 rounded-3xl px-5 py-1 text-sm font-medium"
+                  href={slugSelector(`/categories/${slugify(category)}`, lang)}
+                >
+                  {humanize(category)}
+                  {index !== categories.length - 1 && ","}
+                </a>
+              ))
+            }
+
+            {
+              date && (
+                <div class="flex items-center gap-2">
+                  <FaCalendar size={14} />
+                  <p>{dateFormat(date)}</p>
+                </div>
+              )
+            }
+          </div>
+          <h1 class="pb-5" set:html={markdownify(title)} />
+          <div class="flex items-center gap-2 pb-5">
+            <ImageMod
+              src={"/images/avatar.png"}
+              width={28}
+              height={28}
+              alt="avatar"
+            />
+
+            <p class="title-colored-author" set:html={markdownify(author)} />
+          </div>
+          <p
+            class="mb-10 line-clamp-3"
+            set:html={markdownify(featuredPost.body)}
+          />
+          <div class="inline-block">
+            <a
+              class="btn btn-primary"
+              href={slugSelector(`/${featuredPost.slug}`, lang)}
+            >
+              <span> Read More<span class="sr-only">Details</span> </span>
+              <ArrowSVG />
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

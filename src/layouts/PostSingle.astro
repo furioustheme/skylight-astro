@@ -1,0 +1,153 @@
+---
+import Share from "@/components/Share.astro";
+import config from "@/config/config.json";
+import Disqus from "@/helpers/Disqus";
+import { getSinglePage } from "@/lib/contentParser.astro";
+import dateFormat from "@/lib/utils/dateFormat";
+import { slugSelector } from "@/lib/utils/languageParser";
+import similarItems from "@/lib/utils/similarItems";
+import { humanize, markdownify, slugify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+import { FaCalendar } from "react-icons/fa6";
+import BlogCard from "./components/BlogCard.astro";
+import ImageMod from "./components/ImageMod.astro";
+import CallToAction from "./partials/CallToAction.astro";
+const { default_language } = config.settings;
+
+const COLLECTION_FOLDER = "blog";
+const { post } = Astro.props;
+let { lang } = Astro.params;
+
+if (!lang) {
+  lang = default_language;
+}
+
+const posts = await getSinglePage(
+  COLLECTION_FOLDER,
+  lang as keyof ContentEntryMap,
+);
+const similarPosts = similarItems(post, posts);
+const { Content } = await post.render();
+const { title, description, author, categories, image, date } = post.data;
+---
+
+<section class="mx-4">
+  <div class="relative">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="md:col-10 pt-14 sm:pt-24">
+          <h1
+            class="capitalize font-semibold pb-10"
+            set:html={markdownify(title)}
+          />
+          <ImageMod
+            src={image}
+            alt={title}
+            class="w-full rounded-sm md:rounded-xl"
+            format="webp"
+            width={1200}
+            height={600}
+          />
+          <div
+            class="flex flex-wrap justify-between items-center gap-6 sm:gap-5 my-10"
+          >
+            <div class="flex items-center gap-2">
+              <ImageMod
+                src={"/images/avatar.png"}
+                width={28}
+                height={28}
+                alt="avatar"
+              />
+              <p
+                class="title-colored-author m-0"
+                set:html={markdownify(author)}
+              />
+            </div>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-5">
+              {
+                date && (
+                  <div class="flex items-center gap-2">
+                    <FaCalendar size={14} className="-mt-1" />
+                    <p>{dateFormat(date)}</p>
+                  </div>
+                )
+              }
+
+              {
+                categories
+                  .slice(0, 1)
+                  .map((category: string, index: number) => (
+                    <a
+                      class="bg-secondary text-dark/80 hover:text-primary transition duration-300 rounded-3xl px-5 py-1 text-sm font-medium"
+                      href={slugSelector(
+                        `/categories/${slugify(category)}`,
+                        lang,
+                      )}
+                    >
+                      {humanize(category)}
+                      {index !== categories.length - 1 && ","}
+                    </a>
+                  ))
+              }
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="bg-shape-top-right w-full h-[calc(50%+3.5rem)] sm:h-[calc(50%+6rem)] !absolute top-0 left-1/2 transform -translate-x-1/2 !-z-10"
+    >
+    </div>
+  </div>
+  <div class="container">
+    <div class="row justify-center">
+      <div class="md:col-10">
+        <article>
+          <div class="content">
+            <Content />
+          </div>
+
+          <div class="row items-start justify-between">
+            <div class="flex items-center lg:col-4">
+              <h5 class="mr-3">Share :</h5>
+              <Share
+                className="social-icons-secondary"
+                title={title}
+                description={description}
+                slug={post.slug}
+              />
+            </div>
+          </div>
+          <Disqus className="mt-20" client:load />
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section pb-0">
+  <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="sm:col-8 md:col-12">
+          <h2 class="h1 pb-10 md:pb-14 font-semibold">
+            Related
+            <strong class="font-semibold">Article</strong>
+          </h2>
+        </div>
+      </div>
+      <div class="row justify-center md:justify-start g-4 gy-5">
+        <!-- Related posts -->
+        {
+          similarPosts.map((post) => (
+            <div class="sm:col-8 md:col-6 lg:col-4">
+              <BlogCard data={post} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<CallToAction />

@@ -1,0 +1,95 @@
+---
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import CheckBoxSVG from "@/helpers/svg/CheckBoxSVG";
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { opportunities } = homepage[0].data;
+---
+
+<section class="section pb-0 mx-4">
+  <div class="bg-shape-top-left bg-shape-bottom-right py-20 lg:py-24 2xl:py-32">
+    <div class="container relative z-10">
+      <div class="row justify-center">
+        <div class="md:col-10 pb-14 lg:pb-20 text-center">
+          <h2
+            class="h1 title-colored mb-4"
+            data-aos="fade-up"
+            set:html={markdownify(opportunities.title)}
+          />
+          <p
+            class="max-w-lg mx-auto"
+            data-aos="fade-up"
+            data-aos-delay="100"
+            set:html={markdownify(opportunities.description)}
+          />
+        </div>
+      </div>
+
+      {
+        opportunities?.blocks?.map(
+          (
+            block: {
+              image: string;
+              heading: string;
+              paragraph: string;
+              features: { title: string; description: string }[];
+            },
+            i: number,
+          ) => (
+            <div
+              class={`row items-center g-4 xl:g-5 gy-5 investment-container ${opportunities?.blocks.length - 1 === i ? "!pb-0" : "pb-28"}`}
+            >
+              <div class="lg:col-6" data-aos="fade-right" data-aos-delay="100">
+                <div class="flex justify-center">
+                  <div class="z-10 relative investment-bg">
+                    <img
+                      src={block?.image}
+                      alt="investment"
+                      class="z-10 mx-auto w-full"
+                    />
+                  </div>
+                </div>
+              </div>
+              <div class="lg:col-6" data-aos="fade-left" data-aos-delay="100">
+                <h2
+                  class="title-colored pb-4"
+                  set:html={markdownify(block?.heading)}
+                />
+                <p class="pb-10" set:html={markdownify(block?.paragraph)} />
+                <div class="row">
+                  {block?.features?.map(
+                    (feature: { title: string; description: string }) => (
+                      <div class="md:col-6 lg:col-12 pb-5">
+                        <div class="flex items-center gap-2 pb-2">
+                          <CheckBoxSVG />
+                          <h2 class="font-semibold h6">{feature?.title}</h2>
+                        </div>
+                        <p>{feature?.description}</p>
+                      </div>
+                    ),
+                  )}
+                </div>
+              </div>
+            </div>
+          ),
+        )
+      }
+
+      {
+        opportunities?.button.enable && (
+          <a
+            href={opportunities?.button.link}
+            class="btn btn-primary inline-flex items-center gap-2 mt-8"
+          >
+            <span>{opportunities?.button.label}</span>
+            <ArrowSVG />
+          </a>
+        )
+      }
+    </div>
+  </div>
+</section>

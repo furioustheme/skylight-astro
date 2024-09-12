@@ -1,0 +1,11 @@
+.btn {
+  @apply rounded px-5 sm:px-7 py-4 md:py-3 text-[14px] sm:text-lg font-normal sm:font-medium capitalize transition duration-300 inline-flex items-center justify-center gap-3 sm:gap-4;
+}
+
+.btn-primary {
+  @apply border border-dark bg-dark hover:bg-white text-white hover:text-dark;
+}
+
+.btn-outline-primary {
+  @apply border border-dark text-dark bg-white hover:bg-dark hover:text-white;
+}

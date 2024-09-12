@@ -1,0 +1,113 @@
+---
+import CaseStudyCard from "@/components/CaseStudyCard.astro";
+import Base from "@/layouts/Base.astro";
+import { getSinglePage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import type { ContentEntryMap } from "astro:content";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLang.map(async (lang) => {
+      const caseStudies = await getSinglePage(
+        "case-studies",
+        lang as keyof ContentEntryMap,
+      );
+
+      return caseStudies.map((caseStudy) => ({
+        params: {
+          lang: lang || undefined,
+          single: caseStudy.slug.split("/").pop(),
+        },
+        props: {
+          caseStudy,
+        },
+      }));
+    }),
+  );
+  return paths.flat();
+}
+
+const { caseStudy } = Astro.props;
+const { lang } = Astro.params;
+const { title, subtitle, meta_title, description, image } = caseStudy.data;
+const { Content } = await caseStudy.render();
+
+const caseStudies = await getSinglePage(
+  "case-studies",
+  lang as keyof ContentEntryMap,
+);
+
+const featuredCaseStudies = caseStudies.filter(
+  (item) => item.data.featured && item.slug !== caseStudy.slug,
+);
+---
+
+<Base
+  title={title}
+  meta_title={meta_title}
+  description={description}
+  image={image}
+>
+  <section class="mx-4">
+    <div class="bg-shape-top-right">
+      <div class="container py-20">
+        <div class="row justify-between items-center g-4 relative z-[10]">
+          <div class="lg:col-7" data-aos="fade-right">
+            <div>
+              <div
+                class="inline-flex items-center gap-2 bg-secondary py-2 px-6 rounded-3xl mb-5"
+              >
+                <img src="/images/hero-icon.png" alt="icon" class="h-7" />
+                <p class="text-dark" set:html={markdownify(subtitle)} />
+              </div>
+              <h1 class="mb-3 capitalize" set:html={markdownify(title)} />
+              <p class="mb-5 max-w-lg" set:html={markdownify(description)} />
+            </div>
+          </div>
+          <div class="lg:col-5" data-aos="fade-left">
+            <img src={image} alt={title} class="rounded-xl w-full" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section pb-0">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="lg:col-8">
+          <div class="content">
+            <Content />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section pb-0">
+    <div class="bg-shape-top-right py-16 md:py-20 lg:py-24 2xl:py-32">
+      <div class="container relative z-10">
+        <div class="row justify-center md:justify-start">
+          <div class="col-12 sm:col-8">
+            <h2 class="pb-10 font-semibold">
+              Featured case
+              <strong> studies</strong>
+            </h2>
+          </div>
+        </div>
+        <div class="row justify-start sm:justify-center md:justify-start g-4">
+          {
+            featuredCaseStudies.map((study) => (
+              <div class="col-12 sm:col-8 md:col-6 lg:col-4">
+                <CaseStudyCard data={study} />
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+  <CallToAction />
+</Base>

@@ -1,0 +1,43 @@
+---
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import { Icon } from "astro-icon/components";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { key_features } = homepage[0].data;
+---
+
+<section class="section pb-0">
+  <div class="container">
+    <h2
+      class="h1 text-center pb-24"
+      data-aos="fade-up"
+      set:html={markdownify(key_features.title)}
+    />
+
+    <div data-aos="fade-up" data-aos-delay="100">
+      <div class="row g-4">
+        {
+          key_features.content.map((feature: { icon: string; heading: string; description: string }) => (
+            <div class="md:col-6 lg:col-4 mb-14 lg:mb-0">
+              <div class="bg-body shadow rounded relative p-6 h-full">
+                <div class="p-2 rounded absolute top-[-30px]">
+                  <div class="bg-primary/20 rounded-md">
+                    <Icon name={feature.icon} class={"w-14 h-14 p-2"} />
+                  </div>
+                </div>
+                <h3 class="h6 pt-10" set:html={markdownify(feature.heading)} />
+                <p
+                  class="pt-4 pb-4"
+                  set:html={markdownify(feature.description)}
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>

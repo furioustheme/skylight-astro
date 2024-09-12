@@ -1,0 +1,136 @@
+---
+import ImageMod from "@/components/ImageMod.astro";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import Base from "@/layouts/Base.astro";
+import { getSinglePage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import Opportunities from "@/partials/Opportunities.astro";
+import type { ContentEntryMap } from "astro:content";
+
+export async function getStaticPaths() {
+  const paths = await Promise.all(
+    supportedLang.map(async (lang) => {
+      const posts = await getSinglePage(
+        "services",
+        lang as keyof ContentEntryMap,
+      );
+
+      return posts.map((post) => ({
+        params: {
+          lang: lang || undefined,
+          single: post.slug.split("/").pop(),
+        },
+        props: {
+          post,
+        },
+      }));
+    }),
+  );
+  return paths.flat();
+}
+
+const { post } = Astro.props;
+const { title, meta_title, description, image, button, benefits_section } =
+  post.data;
+const { Content } = await post.render();
+---
+
+<Base
+  title={title}
+  meta_title={meta_title}
+  description={description}
+  image={image}
+>
+  <section class="mx-4">
+    <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+      <div class="container">
+        <div class="row justify-between items-center g-4 gy-5 relative z-[10]">
+          <div class="lg:col-5">
+            <div data-aos="fade-right">
+              <h1 class="mb-4 capitalize" set:html={markdownify(title)} />
+              <p
+                class="mb-8 text-balance"
+                set:html={markdownify(description)}
+              />
+              {
+                button.enable && (
+                  <a class="btn btn-primary" href={button.link}>
+                    {button.label}
+                    <ArrowSVG />
+                  </a>
+                )
+              }
+            </div>
+          </div>
+          <div class="lg:col-5" data-aos="fade-left">
+            <ImageMod
+              src={image}
+              alt={title}
+              width={650}
+              height={500}
+              class="rounded-xl w-full"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section pb-0">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="md:col-10 pb-14 text-center">
+          <h2
+            class="h1 text-center pb-4"
+            data-aos="fade-up"
+            set:html={markdownify(benefits_section.title)}
+          />
+          <p
+            class="max-w-lg mx-auto"
+            data-aos="fade-up"
+            data-aos-delay="50"
+            set:html={benefits_section.description}
+          />
+        </div>
+      </div>
+      <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+        {
+          benefits_section.benefits.map((b: { image: string; title: string; description: string }) => (
+            <div class="sm:col-6 md:col-4 lg:col-3">
+              <div class="bg-white shadow p-5 sm:p-8 rounded-lg h-full">
+                <div class="p-2 bg-secondary rounded block w-fit mx-auto">
+                  <ImageMod
+                    src={b.image}
+                    height={40}
+                    width={40}
+                    alt="services"
+                  />
+                </div>
+                <h3
+                  class="h5 text-center mt-6"
+                  set:html={markdownify(b.title)}
+                />
+                <p
+                  class="text-center mt-4"
+                  set:html={markdownify(b.description)}
+                />
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div class="row justify-center pt-14">
+        <div class="col-10 md:col-8">
+          <div class="content">
+            <Content />
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Opportunities />
+  <CallToAction />
+</Base>

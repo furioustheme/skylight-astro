@@ -1,0 +1,46 @@
+---
+import ImageMod from "@/components/ImageMod.astro";
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { integration_section } = homepage[0].data;
+const { enable, title, description, logos } = integration_section;
+---
+
+{
+  enable && (
+    <section class="section pb-0">
+      <div class="container">
+        <div class="flex justify-center">
+          <div class="max-w-2xl pb-14">
+            <h2
+              class="h1 text-center pb-4"
+              data-aos="fade-up"
+              set:html={markdownify(title)}
+            />
+            <p
+              class="max-w-lg mx-auto text-center"
+              data-aos="fade-up"
+              data-aos-delay="100"
+              set:html={markdownify(description)}
+            />
+          </div>
+        </div>
+        <div
+          class="max-w-3xl mx-auto flex flex-wrap justify-center items-center gap-5"
+          data-aos="fade-up"
+          data-aos-delay="200"
+        >
+          {logos.map((logo: string) => (
+            <div class="w-16 h-16 border border-primary rounded-lg p-2 flex items-center justify-center">
+              <ImageMod src={logo} alt="brand-img" width={40} height={40} />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

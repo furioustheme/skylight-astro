@@ -1,0 +1,179 @@
+---
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import CheckBoxSVG from "@/helpers/svg/CheckBoxSVG";
+import CrossSVG from "@/helpers/svg/CrossSVG";
+import TickSVG from "@/helpers/svg/TickSVG";
+import Base from "@/layouts/Base.astro";
+import { getListPage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import PricingCards from "@/partials/PricingCards.astro";
+import type { ContentEntryMap } from "astro:content";
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+
+const { lang } = Astro.params;
+const pricingIndex = await getListPage(
+  "pricing",
+  lang as keyof ContentEntryMap,
+);
+const { pricing_table, trial_cta } = pricingIndex[0].data;
+---
+
+<Base lang={lang} {...pricingIndex[0].data}>
+  <PricingCards className="bg-shape-top-right" />
+
+  <!-- pricing table   -->
+  <section class="section pb-0">
+    <div class="container">
+      <div class="col-12 text-center">
+        <div class="bg-primary z-20 rounded-t-xl text-white lg:top-[90px]">
+          <div class="lg:row gx-0 md:items-center md:py-3">
+            <div class="lg:col-6 hidden text-start lg:block">
+              <div class="flex min-h-full items-center justify-center md:block">
+                <div class="pl-8 font-semibold">Features</div>
+              </div>
+            </div>
+            <div class="lg:col-6 lg:border-l">
+              <div class="row divide-x">
+                {
+                  pricing_table?.features?.map((feature: string) => (
+                    <div class="col lg:col-4">
+                      <div class="flex min-h-full items-center justify-center">
+                        <h5
+                          class="px-1.5 py-4 font-medium text-base text-body font-primary"
+                          set:html={markdownify(feature)}
+                        />
+                      </div>
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="overflow-x-hidden">
+          <div class="border border-t-0">
+            {
+              pricing_table?.details?.map((detail: any) => (
+                <div class="row g-0">
+                  <div class="lg:col-6 border-t border-r text-start">
+                    <div class="flex h-full items-center justify-between px-3 py-3 sm:px-6 sm:py-6 lg:pl-8 lg:pr-2">
+                      <div class="font-medium capitalize">{detail.feature}</div>
+                    </div>
+                  </div>
+                  <div class="lg:col-6 border-t">
+                    <div class="row g-0 divide-x">
+                      <div class="col flex items-center justify-center lg:col-4">
+                        <div class="px-3 py-3 text-[10px] sm:py-6">
+                          {detail.Starter ? <TickSVG /> : <CrossSVG />}
+                        </div>
+                      </div>
+                      <div class="col flex items-center justify-center lg:col-4">
+                        <div class="px-3 py-3 text-[10px] sm:py-6">
+                          {detail.Business ? <TickSVG /> : <CrossSVG />}
+                        </div>
+                      </div>
+                      <div class="col flex items-center justify-center lg:col-4">
+                        <div class="px-3 py-3 text-[10px] sm:py-6">
+                          {detail.Enterprise ? <TickSVG /> : <CrossSVG />}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))
+            }
+          </div>
+
+          <!-- Plan Buttons -->
+          <div class="rounded-b-xl border border-t-0 bg-theme-light">
+            <div class="row g-0">
+              <div class="hidden lg:col-6 lg:block"></div>
+              <div class="lg:col-6">
+                <div class="row g-0">
+                  {
+                    pricing_table?.plans?.map((plan: any) => (
+                      <div class="col-4">
+                        <div class="flex min-h-full items-center justify-center">
+                          <a
+                            href={plan.link}
+                            class="btn btn-outline-primary whitespace-nowrap px-2 sm:px-5 mx-1 my-4 md:mx-3"
+                          >
+                            {plan.name}
+                          </a>
+                        </div>
+                      </div>
+                    ))
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /pricing table  -->
+
+  <!-- trial cta  -->
+  <section class="section pb-0 overflow-hidden">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="md:col-10">
+          <div class="row g-4 gy-5 justify-between">
+            <div class="lg:col-6" data-aos="fade-right">
+              <h2 class="pb-4" set:html={markdownify(trial_cta?.title)} />
+              <p class="pb-8" set:html={markdownify(trial_cta?.description)} />
+              <div>
+                {
+                  trial_cta?.features?.map((feature: string) => (
+                    <div class="flex items-center gap-2 pb-4 last:pb-0">
+                      <CheckBoxSVG />
+                      <h6 class="font-medium" set:html={markdownify(feature)} />
+                    </div>
+                  ))
+                }
+              </div>
+            </div>
+            <div class="lg:col-5" data-aos="fade-left">
+              <div class="border border-primary rounded-lg p-6 lg:p-10 xl:p-14">
+                <p
+                  class="text-sm border border-primary bg-theme-light rounded px-2 py-1 w-fit block mx-auto mb-4"
+                  set:html={markdownify(trial_cta?.pricing_box?.badge)}
+                />
+                <h3
+                  class="font-semibold text-center pb-4"
+                  set:html={markdownify(trial_cta?.pricing_box?.title)}
+                />
+                <p
+                  class="text-sm text-center pb-10"
+                  set:html={markdownify(trial_cta?.pricing_box?.description)}
+                />
+                {
+                  trial_cta?.pricing_box?.button.enable && (
+                    <a
+                      href={trial_cta?.pricing_box?.button.link}
+                      class="btn btn-primary flex w-fit mx-auto"
+                    >
+                      {trial_cta?.pricing_box?.button.label}
+                      <ArrowSVG />
+                    </a>
+                  )
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- /trial cta  -->
+  <CallToAction />
+</Base>

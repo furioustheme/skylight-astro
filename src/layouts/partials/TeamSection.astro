@@ -1,0 +1,40 @@
+---
+import PersonCard from "@/components/PersonCard.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+
+const { data } = Astro.props;
+---
+
+{
+  data.enable && (
+    <section class="section pb-0">
+      <div class="container">
+        <div class="row justify-center">
+          <div class="md:col-10 pb-14">
+            <h2
+              class="h1 text-center text-balance pb-4"
+              data-aos="fade-up"
+              set:html={markdownify(data?.title)}
+            />
+            <p
+              class="text-balance text-center"
+              data-aos="fade-up"
+              data-aos-delay="100"
+              set:html={markdownify(data.description)}
+            />
+          </div>
+        </div>
+
+        {
+          <div class="row g-4 gy-5">
+            {data?.members?.map((member: any) => (
+              <div class="sm:col-6 lg:col-3">
+                <PersonCard member={member} />
+              </div>
+            ))}
+          </div>
+        }
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,57 @@
+---
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { how_it_works: howItWorks } = homepage[0].data;
+const { title, description, steps } = howItWorks;
+---
+
+<section class="section pb-0 mx-4">
+  <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+    <div class="container relative z-10">
+      <div class="row justify-center">
+        <div class="md:col-10 pb-14">
+          <h2
+            class="h1 text-center pb-4"
+            data-aos="fade-up"
+            set:html={markdownify(title)}
+          />
+          <p
+            class="max-w-lg mx-auto text-center"
+            data-aos="fade-up"
+            data-aos-delay="100"
+            set:html={markdownify(description)}
+          />
+        </div>
+      </div>
+      <div class="row g-4" data-aos="fade-up" data-aos-delay="200">
+        {
+          steps?.map(
+            (step: { image: string; title: string; description: string }) => (
+              <div class="sm:col-6 lg:col-4">
+                <div class="bg-white px-5 py-10 lg:p-10 rounded-lg h-full">
+                  <img
+                    src={step.image}
+                    alt={step.title}
+                    class="block w-fit mx-auto pb-5"
+                  />
+                  <h2
+                    class="h5 text-center pb-4"
+                    set:html={markdownify(step.title)}
+                  />
+                  <p
+                    class="text-center pb-8"
+                    set:html={markdownify(step.description)}
+                  />
+                </div>
+              </div>
+            ),
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>

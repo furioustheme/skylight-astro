@@ -1,0 +1,39 @@
+{
+  "main": [
+    { "name": "Home", "url": "/" },
+    { "name": "About", "url": "/about" },
+    { "name": "Pricing", "url": "/pricing" },
+    { "name": "Contact", "url": "/contact" },
+    {
+      "name": "Pages",
+      "url": "",
+      "hasChildren": true,
+      "children": [
+        { "name": "Services", "url": "/services" },
+        { "name": "Blog", "url": "/blog" },
+        { "name": "Team", "url": "/team" },
+        { "name": "Careers", "url": "/careers" },
+        { "name": "Case Studies", "url": "/case-studies" },
+        { "name": "FAQ", "url": "/faq" }
+      ]
+    }
+  ],
+  "footer": [
+    { "company":[
+      { "name": "About us", "url": "/about" },
+      { "name": "Team", "url": "/team" },
+      { "name": "Contact", "url": "/contact" },
+      { "name": "Privacy Policy", "url": "/privacy-policy" },
+      { "name": "Tearms & Conditions", "url": "/terms-conditions" }
+    ]},
+    { "product":[
+      { "name": "Services", "url": "/services" },
+      { "name": "Pricing", "url": "/pricing" }
+    ]},
+    { "utility_pages":[
+      { "name": "FAQ", "url": "/faq" },
+      { "name": "Team", "url": "/team" },
+      { "name": "Error 404", "url": "/404" }
+    ]}
+  ]
+}

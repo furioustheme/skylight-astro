@@ -1,0 +1,40 @@
+---
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+const { lang } = Astro.params;
+const about = await getListPage("about", lang as keyof ContentEntryMap);
+
+const { journey_story } = about[0].data;
+---
+
+<section class="section pb-0 overflow-hidden">
+  <div class="row justify-center">
+    <div class="md:col-10 pb-14">
+      <h2
+        class="h1 text-center pb-4"
+        data-aos="fade-up"
+        set:html={markdownify(journey_story.title)}
+      />
+      <p
+        class="max-w-2xl mx-auto text-center"
+        data-aos="fade-up"
+        data-aos-delay="50"
+        set:html={markdownify(journey_story.description)}
+      />
+    </div>
+  </div>
+  <div class="container" data-aos="fade-up" data-aos-delay="100">
+    <div class="sm:columns-2 lg:columns-3 gap-5">
+      {
+        journey_story?.images?.map((image: { src: string; alt: string }) => (
+          <img
+            class="break-inside-avoid rounded-xl mb-5 mx-auto"
+            src={image.src}
+            alt={image.alt}
+          />
+        ))
+      }
+    </div>
+  </div>
+</section>

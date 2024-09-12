@@ -1,0 +1,71 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getListPage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import PageHeader from "@/partials/PageHeader.astro";
+import PricingCards from "@/partials/PricingCards.astro";
+import ServicesSection from "@/partials/ServicesSection.astro";
+import type { ContentEntryMap } from "astro:content";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+
+const { lang } = Astro.params;
+const servicesIndex = await getListPage(
+  "services",
+  lang as keyof ContentEntryMap,
+);
+
+const { why_choose_us } = servicesIndex[0].data;
+---
+
+<Base title={"Services"}>
+  <PageHeader title={"Services"} />
+  <ServicesSection />
+
+  <section class="section pb-0">
+    <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+      <div class="container relative z-10">
+        <h2
+          class="h1 pb-10 text-center"
+          data-aos="fade-up"
+          set:html={markdownify(why_choose_us.title)}
+        />
+        <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+          {
+            why_choose_us?.sections?.map(
+              (section: {
+                image: string;
+                title: string;
+                description: string;
+              }) => (
+                <div class="sm:col-6 lg:col-4">
+                  <div class="rounded-xl overflow-hidden shadow bg-white">
+                    <img
+                      src={section.image}
+                      alt={section.title}
+                      class="w-full"
+                    />
+                    <div class="p-5 sm:p-8">
+                      <h5 class="pb-4" set:html={markdownify(section.title)} />
+                      <p set:html={markdownify(section.description)} />
+                    </div>
+                  </div>
+                </div>
+              ),
+            )
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <PricingCards className="!pb-0" />
+  <CallToAction />
+</Base>

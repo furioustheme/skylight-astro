@@ -1,0 +1,169 @@
+---
+import Logo from "@/components/Logo.astro";
+import config from "@/config/config.json";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import ChildMenuArrow from "@/helpers/svg/ChildMenuArrow";
+import {
+  getLangFromUrl,
+  getTranslations,
+  slugSelector,
+} from "@/lib/utils/languageParser";
+import type { ContentEntryMap } from "astro:content";
+import type { MenuItem } from "@/types";
+
+let lang = getLangFromUrl(Astro.url);
+const menu = await getTranslations(lang as keyof ContentEntryMap);
+
+const { navigation_button, settings } = config;
+const { default_language } = config.settings;
+const { pathname } = Astro.url;
+const { get_started } = await getTranslations(lang as keyof ContentEntryMap);
+
+const disabledLanguages = config.settings.disable_languages as string[];
+if (disabledLanguages.includes(lang)) {
+  lang = default_language;
+}
+---
+
+<header class={`header z-30 ${settings.sticky_header && "sticky top-0"}`}>
+  <nav class="navbar container">
+    {/* logo */}
+    <div class="order-0">
+      <Logo />
+    </div>
+    {/* navbar toggler */}
+    <input id="nav-toggle" type="checkbox" class="hidden" />
+    <label
+      for="nav-toggle"
+      class="order-3 cursor-pointer flex items-center lg:hidden text-dark lg:order-1"
+    >
+      <span
+        id="group-active"
+        class="focus:outline-none z-[100] fixed right-5"
+        title="Menu Toggler"
+      >
+        <span
+          class="relative flex items-center justify-center rounded w-[45px] h-[45px] transform transition-all bg-primary ring-0 ring-primary/30 hover:ring-8 hamburger-1 ring-opacity-30 duration-200"
+        >
+          <span
+            class="flex flex-col justify-between w-[20px] h-[20px] transform transition-all duration-300 hamburger-2 origin-center"
+          >
+            <span
+              class="bg-white h-[2px] w-1/2 rounded transform transition-all duration-300 hamburger-3 origin-right delay-75"
+            ></span>
+            <span class="bg-white h-[1px] rounded"></span>
+            <span
+              class="bg-white h-[2px] w-1/2 rounded self-end transform transition-all duration-300 origin-left delay-75 hamburger-4"
+            ></span>
+          </span>
+        </span>
+      </span>
+    </label>
+    {/* /navbar toggler */}
+
+    <ul
+      id="nav-menu"
+      class="navbar-nav order-3 hidden w-full pb-6 lg:order-1 lg:flex lg:w-auto lg:space-x-2 lg:pb-0 xl:space-x-8"
+    >
+      {
+        menu?.main.map((menu: MenuItem) => (
+          <>
+            {menu.hasChildren ? (
+              <li class="nav-item nav-dropdown group relative">
+                <span
+                  class={`nav-link inline-flex gap-1 items-center ${
+                    menu.children
+                      ?.map(({ url }: { url: string }) =>
+                        slugSelector(url, lang),
+                      )
+                      .includes(pathname)
+                      ? "active"
+                      : ""
+                  }`}
+                >
+                  {menu.name}
+                  <ChildMenuArrow />
+                </span>
+                <ul class="nav-dropdown-list hidden lg:group-hover:block lg:invisible lg:absolute lg:block lg:opacity-0 lg:group-hover:visible lg:group-hover:opacity-100 max-w-[300px] mx-auto">
+                  {menu.children?.map((child: MenuItem) => (
+                    <li class="nav-dropdown-item">
+                      <a
+                        href={slugSelector(child.url, lang)}
+                        aria-label={child.name}
+                        class={`nav-dropdown-link block ${
+                          pathname === slugSelector(child.url, lang) && "active"
+                        }`}
+                      >
+                        {child.name}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ) : (
+              <li class="nav-item">
+                <a
+                  href={slugSelector(menu.url, lang)}
+                  class={`nav-link block ${
+                    pathname === slugSelector(menu.url, lang) && "active"
+                  }`}
+                >
+                  {menu.name}
+                </a>
+              </li>
+            )}
+          </>
+        ))
+      }
+
+      <li class="mt-4 inline-grid lg:hidden">
+        {/* Navigation button */}
+        {
+          navigation_button.enable && (
+            <a class="btn btn-primary btn-sm" href={navigation_button.link}>
+              {get_started}
+              <ArrowSVG />
+            </a>
+          )
+        }
+      </li>
+    </ul>
+
+    <div class="order-1 ml-auto flex items-center md:order-2 lg:ml-0">
+      {/* Navigation button */}
+      {
+        navigation_button.enable && (
+          <a
+            class="btn btn-primary hidden lg:flex"
+            href={navigation_button.link}
+          >
+            {get_started}
+            <ArrowSVG />
+          </a>
+        )
+      }
+    </div>
+  </nav>
+</header>
+
+<script>
+  // astro:page-load event is fired when the page is loaded
+  document.addEventListener("astro:page-load", () => {
+    const navDropdown = document.querySelector(
+      ".nav-dropdown",
+    ) as HTMLElement | null;
+    const navDropdownList = document.querySelector(
+      ".nav-dropdown-list",
+    ) as HTMLElement | null;
+    const navDropdownIcon = document.querySelector(
+      ".nav-dropdown-icon",
+    ) as HTMLElement | null;
+
+    if (navDropdown && navDropdownList && navDropdownIcon) {
+      navDropdown.addEventListener("click", () => {
+        navDropdownList.classList.toggle("hidden");
+        navDropdownIcon.classList.toggle("rotate-180");
+      });
+    }
+  });
+</script>

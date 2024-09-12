@@ -1,0 +1,45 @@
+{
+  "site": {
+    "title": "Skylight",
+    "base_url": "https://skylight-astro.vercel.app",
+    "base_path": "/",
+    "trailing_slash": false,
+    "favicon": "/images/favicon.png",
+    "logo": "/images/logo.png",
+    "logo_width": "150",
+    "logo_height": "40",
+    "logo_text": "Skylight"
+  },
+
+  "settings": {
+    "sticky_header": true,
+    "pagination": 4,
+    "blog_folder": "blog",
+    "default_language": "en",
+    "disable_languages": [],
+    "default_language_in_subdir": false
+  },
+
+  "params": {
+    "contact_form_action": "#",
+    "copyright": "&copy; Designed And Developed by [Furioustheme](https://furioustheme.com/)"
+  },
+
+  "navigation_button": {
+    "enable": true,
+    "label": "Get Started",
+    "link": "#!"
+  },
+
+  "disqus": {
+    "enable": true,
+    "shortname": "furioustheme-template",
+    "settings": {}
+  },
+
+  "metadata": {
+    "meta_author": "Furioustheme",
+    "meta_image": "/images/og-image.png",
+    "meta_description": "astro and tailwind theme"
+  }
+}

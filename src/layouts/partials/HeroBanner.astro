@@ -1,0 +1,101 @@
+---
+import ImageMod from "@/components/ImageMod.astro";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import { getListPage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { banner } = homepage[0].data;
+---
+
+<section class="mx-4">
+  <div class="bg-gradient">
+    <div class="container py-20 lg:py-24 2xl:py-32">
+      <div
+        class="flex flex-col lg:flex-row justify-between items-center gap-16 lg:gap-6 relative z-[10]"
+      >
+        <div class="flex-1">
+          <div data-aos="fade-right">
+            <div
+              class="inline-flex items-center gap-2 bg-secondary py-2 px-5 rounded-3xl mb-4"
+            >
+              <img src="/images/hero-icon.png" alt="icon" class="h-7" />
+              <p class="text-dark text-[14px] sm:text-base">
+                {banner.badge}
+              </p>
+            </div>
+
+            <h1 set:html={markdownify(banner.title)} class="title-colored" />
+
+            <p
+              class="text-dark pb-10 text-balance"
+              set:html={markdownify(banner.content)}
+            />
+
+            {
+              banner.button && (
+                <a
+                  class="btn btn-primary"
+                  href={banner.button.link}
+                  target={banner.button.target}
+                >
+                  {banner.button.label}
+                  <ArrowSVG />
+                </a>
+              )
+            }
+          </div>
+        </div>
+        <div class="flex-1 relative" data-aos="fade-left">
+          <ImageMod
+            src={banner?.images?.main?.src}
+            alt={banner?.images?.main?.alt}
+            class="w-[90%] drop-shadow-lg rounded-xl mx-auto 2xl:ml-20"
+            width={710}
+            height={580}
+            format="webp"
+          />
+          <ImageMod
+            src={banner?.images?.left_top_img?.src}
+            alt={banner?.images?.left_top_img?.alt}
+            class="w-1/3 lg:w-auto absolute top-[20%] -left-2 2xl:left-5 drop-shadow-lg rounded"
+            width={175}
+            height={58}
+            format="webp"
+          />
+          <ImageMod
+            src={banner?.images?.right_top_img?.src}
+            alt={banner?.images?.right_top_img?.alt}
+            class="absolute top-[10%] -right-3 2xl:-right-20 drop-shadow-lg rounded hidden xl:block"
+            width={175}
+            height={58}
+            format="webp"
+          />
+          <ImageMod
+            src={banner?.images?.right_bottom_img?.src}
+            alt={banner?.images?.right_bottom_img?.alt}
+            class="w-1/3 lg:w-auto absolute bottom-[12%] -right-3 2xl:-right-20 drop-shadow-lg rounded"
+            width={200}
+            height={123}
+            format="webp"
+          />
+        </div>
+      </div>
+
+      {
+        banner?.logo?.enable && (
+          <div
+            class="grid grid-cols-3 md:grid-cols-5 gap-10 justify-center pt-24 relative z-10"
+            data-aos="fade-up"
+          >
+            {banner?.logo?.images?.map((logo: string) => (
+              <img class="mx-auto" src={logo} alt={`logo-${logo}`} />
+            ))}
+          </div>
+        )
+      }
+    </div>
+  </div>
+</section>

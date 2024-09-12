@@ -1,0 +1,68 @@
+---
+import ImageMod from "@/components/ImageMod.astro";
+import Base from "@/layouts/Base.astro";
+import { getListPage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import ContactSection from "@/partials/ContactSection.astro";
+import PageHeader from "@/partials/PageHeader.astro";
+import { type ContentEntryMap } from "astro:content";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+
+const { lang } = Astro.params;
+const contact = await getListPage("contact", lang as keyof ContentEntryMap);
+const { title, description, meta_title, image, support_options } =
+  contact[0].data;
+---
+
+<Base
+  title={title}
+  meta_title={meta_title}
+  description={description}
+  image={image}
+>
+  <PageHeader title={title} />
+
+  <section class="section pb-0" data-aos="fade-up" data-aos-delay="150">
+    <div class="container">
+      <div class="row g-4 justify-center">
+        {
+          support_options?.map(
+            (option: { icon: string; title: string; description: string }) => (
+              <div class="sm:col-6 lg:col-4">
+                <div class="bg-dark rounded-lg p-10 text-center">
+                  <div class="bg-body p-5 block rounded-full w-fit mx-auto">
+                    <ImageMod
+                      width={24}
+                      height={24}
+                      src={option.icon}
+                      alt={option.title}
+                    />
+                  </div>
+                  <h5
+                    class="text-body py-4"
+                    set:html={markdownify(option.title)}
+                  />
+                  <p
+                    class="text-body"
+                    set:html={markdownify(option.description)}
+                  />
+                </div>
+              </div>
+            ),
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <ContactSection />
+  <CallToAction />
+</Base>

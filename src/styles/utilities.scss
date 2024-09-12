@@ -1,0 +1,183 @@
+.rounded-sm {
+  @apply rounded-[4px];
+}
+.rounded {
+  @apply rounded-[6px];
+}
+.rounded-lg {
+  @apply rounded-[12px];
+}
+.rounded-xl {
+  @apply rounded-[16px];
+}
+
+.shadow {
+  box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 25px;
+}
+
+.bg-gradient {
+  @apply max-w-[1680px] rounded-2xl mx-auto bg-gradient-to-b from-secondary to-theme-light/80 relative overflow-hidden;
+  &::before {
+    @apply content-[''] absolute top-[-160px] left-[-80px] w-[700px] h-[700px] rounded-full block bg-white/40;
+  }
+  &::after {
+    @apply content-[''] absolute bottom-[-200px] right-[-200px] w-[500px] h-[500px] rounded-full block bg-white/40;
+  }
+}
+
+.bg-shape-top-left {
+  @apply max-w-[1680px] mx-auto bg-theme-light rounded-lg relative overflow-hidden;
+  &::before {
+    @apply absolute content-[''] top-[-30%] left-[-40%] w-[70%] h-[60%] bg-contain bg-no-repeat rotate-[-120deg];
+    background-image: url("../images/bg-shape.webp");
+  }
+}
+.bg-shape-bottom-right {
+  @apply max-w-[1680px] mx-auto bg-theme-light rounded-lg relative overflow-hidden;
+  &::after {
+    @apply absolute content-[''] bottom-[-30%] right-[-40%] w-[70%] h-[60%] bg-contain bg-no-repeat rotate-[40deg];
+    background-image: url("../images/bg-shape.webp");
+  }
+}
+.bg-shape-top-right {
+  @apply max-w-[1680px] mx-auto bg-theme-light rounded-lg relative overflow-hidden;
+  &::before {
+    @apply absolute content-[''] top-[-200px] right-[-200px] w-[600px] h-[600px] bg-contain bg-no-repeat;
+    background-image: url("../images/bg-shape.webp");
+  }
+}
+
+.investment-bg {
+  @apply relative inline-block;
+  &::before {
+    @apply content-[''] absolute top-[-1%] left-[11%] w-[68%] h-[86%] rounded-xl bg-primary z-[-1];
+  }
+}
+
+.cta-bg {
+  @apply relative w-80 h-80 md:w-96 md:h-96 m-auto rounded-lg mb-10 lg:mb-0;
+  &::before {
+    @apply content-[''] absolute top-0 left-0 w-full h-full bg-primary rounded-full;
+  }
+}
+
+.investment-container:nth-child(odd) {
+  @apply flex-row-reverse;
+}
+
+.investment-container {
+  @apply pb-28;
+  &:last-child {
+    @apply pb-0;
+  }
+}
+
+.login-bg {
+  @apply relative;
+  &::before {
+    @apply content-[''] absolute top-0 left-0 w-full h-full;
+    background-image: url("../images/signin-bg.webp");
+  }
+}
+
+.widget-list {
+  li {
+    a {
+      @apply border-b border-border;
+    }
+
+    &:last-child {
+      a {
+        @apply border-0;
+      }
+    }
+  }
+}
+
+.responsive-mb {
+  & > div:last-child {
+    @apply mb-0;
+  }
+  @screen sm {
+    & > div:nth-last-child(-n + 2) {
+      @apply mb-0;
+    }
+  }
+  @screen lg {
+    & > div:nth-last-child(-n + 3) {
+      @apply mb-0;
+    }
+  }
+}
+
+/* Apply colors using :nth-child */
+.colored-box-icon {
+  & > div:last-child {
+    @apply mb-0;
+  }
+  & > div:nth-child(6n + 1) .color-text {
+    @apply text-primary;
+  }
+
+  & > div:nth-child(6n + 2) .color-text {
+    @apply text-primary;
+  }
+  & > div:nth-child(6n + 3) .color-text {
+    @apply text-primary;
+  }
+
+  & > div:nth-child(6n + 4) .color-text {
+    @apply text-primary;
+  }
+  & > div:nth-child(6n + 5) .color-text {
+    @apply text-primary;
+  }
+  & > div:nth-child(6n + 6) .color-text {
+    @apply text-primary;
+  }
+
+  & > div:nth-child(6n + 1) .color-box {
+    @apply bg-primary/10;
+  }
+  & > div:nth-child(6n + 2) .color-box {
+    @apply bg-primary/10;
+  }
+  & > div:nth-child(6n + 3) .color-box {
+    @apply bg-primary/10;
+  }
+
+  & > div:nth-child(6n + 4) .color-box {
+    @apply bg-primary/10;
+  }
+  & > div:nth-child(6n + 5) .color-box {
+    @apply bg-primary/10;
+  }
+  & > div:nth-child(6n + 6) .color-box {
+    @apply bg-primary/10;
+  }
+}
+
+@media only screen and (min-width: 1024px) {
+  .divide-x-border > div {
+    @apply border-r border-border;
+  }
+
+  .divide-x-border > div:nth-child(3n) {
+    @apply border-none;
+  }
+}
+
+@media only screen and (max-width: 1023px) {
+  .divide-x-border > div {
+    @apply border-r border-border;
+  }
+
+  .divide-x-border > div:nth-child(2n) {
+    @apply border-none;
+  }
+}
+@media only screen and (max-width: 539px) {
+  .divide-x-border > div {
+    @apply border-none;
+  }
+}

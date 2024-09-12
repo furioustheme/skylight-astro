@@ -1,0 +1,55 @@
+---
+import BlogCard from "@/components/BlogCard.astro";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import { getListPage, getSinglePage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+const homepage = await getListPage("homepage", lang as keyof ContentEntryMap);
+const { blog_section } = homepage[0].data;
+
+const BLOG_FOLDER = "blog";
+const posts = await getSinglePage(BLOG_FOLDER, lang as keyof ContentEntryMap);
+---
+
+{
+  blog_section.enable && (
+    <section class="section pb-0">
+      <div class="container">
+        <div class="row justify-center">
+          <div class="md:col-10 pb-14">
+            <h2
+              class="h1 text-center pb-4"
+              data-aos="fade-up"
+              set:html={markdownify(blog_section.title)}
+            />
+            <p
+              class="max-w-3xl mx-auto text-center"
+              data-aos="fade-up"
+              data-aos-delay="100"
+              set:html={markdownify(blog_section.description)}
+            />
+          </div>
+        </div>
+
+        <div class="row justify-center md:justify-start g-4 gy-5">
+          {posts.slice(0, 3).map((post) => (
+            <div class="sm:col-8 md:col-6 lg:col-4">
+              <BlogCard data={post} />
+            </div>
+          ))}
+        </div>
+
+        {blog_section.button.enable && (
+          <div class="block w-fit mx-auto mt-14">
+            <a class="btn btn-primary" href={blog_section.button.link}>
+              {blog_section.button.label}
+              <ArrowSVG />
+            </a>
+          </div>
+        )}
+      </div>
+    </section>
+  )
+}

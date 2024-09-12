@@ -1,0 +1,31 @@
+---
+import Base from "@/layouts/Base.astro";
+import { getListPage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import CallToAction from "@/partials/CallToAction.astro";
+import FAQ from "@/partials/FAQ.astro";
+import JourneyStory from "@/partials/JourneyStory.astro";
+import PageTopSection from "@/partials/PageTopSection.astro";
+import TeamSection from "@/partials/TeamSection.astro";
+import type { ContentEntryMap } from "astro:content";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+
+const { lang } = Astro.params;
+const team = await getListPage("team", lang as keyof ContentEntryMap);
+const { leadership_team, all_team_member } = team[0].data;
+---
+
+<Base {...team[0].data}>
+  <PageTopSection data={team[0].data} />
+  <TeamSection data={leadership_team} />
+  <TeamSection data={all_team_member} />
+  <JourneyStory />
+  <FAQ />
+  <CallToAction />
+</Base>

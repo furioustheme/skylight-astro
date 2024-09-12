@@ -1,0 +1,36 @@
+---
+import Base from "@/layouts/Base.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import BlogSection from "@/partials/BlogSection.astro";
+import CallToAction from "@/partials/CallToAction.astro";
+import FAQ from "@/partials/FAQ.astro";
+import HeroBanner from "@/partials/HeroBanner.astro";
+import HowItWork from "@/partials/HowItWork.astro";
+import IntegrationSection from "@/partials/IntegrationSection.astro";
+import KeyIdeas from "@/partials/KeyIdeas.astro";
+import Opportunities from "@/partials/Opportunities.astro";
+import PricingSection from "@/partials/PricingSection.astro";
+import ServicesSection from "@/partials/ServicesSection.astro";
+import Testimonial from "@/partials/Testimonial.astro";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+---
+
+<Base>
+  <HeroBanner />
+  <KeyIdeas />
+  <Opportunities />
+  <ServicesSection />
+  <HowItWork />
+  <IntegrationSection />
+  <PricingSection />
+  <Testimonial />
+  <FAQ />
+  <BlogSection />
+  <CallToAction />
+</Base>

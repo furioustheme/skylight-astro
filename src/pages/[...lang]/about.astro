@@ -1,0 +1,130 @@
+---
+import CheckBoxSVG from "@/helpers/svg/CheckBoxSVG";
+import Base from "@/layouts/Base.astro";
+import { getListPage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import FAQ from "@/partials/FAQ.astro";
+import HowItWork from "@/partials/HowItWork.astro";
+import JourneyStory from "@/partials/JourneyStory.astro";
+import Opportunities from "@/partials/Opportunities.astro";
+import PageTopSection from "@/partials/PageTopSection.astro";
+import TeamSection from "@/partials/TeamSection.astro";
+import type { ContentEntryMap } from "astro:content";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+
+const { lang } = Astro.params;
+const about = await getListPage("about", lang as keyof ContentEntryMap);
+
+const { mission_vision_section } = about[0].data;
+
+const team = await getListPage("team", lang as keyof ContentEntryMap);
+const { leadership_team } = team[0].data;
+---
+
+<Base {...about[0].data}>
+  <PageTopSection data={about[0].data} />
+
+  <section class="section pb-0 overflow-hidden">
+    <div class="container z-10">
+      <div
+        class="row g-4 xl:gx-5 gy-5 justify-between items-center investment-container"
+      >
+        <div class="lg:col-6" data-aos="fade-left">
+          <h2
+            class="h1 pb-6"
+            set:html={markdownify(mission_vision_section.mission.heading)}
+          />
+          <h5
+            class="font-secondary text-primary text-xl pb-4"
+            set:html={markdownify(mission_vision_section.mission.subheading)}
+          />
+          <p
+            class="pb-8"
+            set:html={markdownify(mission_vision_section.mission.description)}
+          />
+          <div
+            class="bg-black py-5 lg:py-7 px-5 lg:px-10 rounded-lg flex flex-wrap items-center justify-around lg:justify-between gap-5 sm:gap-2 counter"
+          >
+            {
+              mission_vision_section.mission.counter.map(
+                (c: { value: string; label: string }) => (
+                  <div class="text-center text-white">
+                    <h2 class="text-white sm:h1">
+                      <span class="count">{c.value}</span>
+                    </h2>
+                    <p>{c.label}</p>
+                  </div>
+                ),
+              )
+            }
+          </div>
+        </div>
+        <div class="lg:col-6" data-aos="fade-right">
+          <img
+            src={mission_vision_section.mission.image}
+            alt={mission_vision_section.mission.heading}
+            class="w-full rounded-xl"
+          />
+        </div>
+      </div>
+
+      <div
+        class="row g-4 xl:gx-5 gy-5 justify-between items-center investment-container"
+      >
+        <div class="lg:col-6" data-aos="fade-right">
+          <h2
+            class="h1 pb-6"
+            set:html={markdownify(mission_vision_section.vision.heading)}
+          />
+          <h5
+            class="font-secondary text-primary text-xl pb-4"
+            set:html={markdownify(mission_vision_section.vision.subheading)}
+          />
+          <p
+            set:html={markdownify(mission_vision_section.vision.description)}
+          />
+          <div class="row">
+            {
+              mission_vision_section.vision.features.map(
+                (f: { title: string; description: string }) => (
+                  <div class="md:col-6 lg:col-12 pt-8">
+                    <div class="flex items-center gap-2 pb-2">
+                      <CheckBoxSVG />
+                      <h6
+                        class="font-semibold"
+                        set:html={markdownify(f.title)}
+                      />
+                    </div>
+                    <p set:html={markdownify(f.description)} />
+                  </div>
+                ),
+              )
+            }
+          </div>
+        </div>
+        <div class="lg:col-6" data-aos="fade-left">
+          <img
+            src={mission_vision_section.vision.image}
+            alt={mission_vision_section.vision.heading}
+            class="w-full rounded-xl"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Opportunities />
+  <TeamSection data={leadership_team} />
+  <HowItWork />
+  <JourneyStory />
+  <FAQ />
+  <CallToAction />
+</Base>

@@ -1,0 +1,43 @@
+---
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import { getLangFromUrl, slugSelector } from "@/lib/utils/languageParser";
+import { markdownify, plainify } from "@/lib/utils/textConverter";
+import ImageMod from "./ImageMod.astro";
+
+const { data } = Astro.props;
+const { title, description, image } = data.data;
+
+const lang = getLangFromUrl(Astro.url);
+const slugParts = data.slug.split("/");
+slugParts[0] = "case-studies";
+const modifiedSlug = slugParts.join("/");
+data.slug = modifiedSlug;
+---
+
+<div class={`px-5 lg:px-8 py-8 rounded-lg shadow h-full bg-white`}>
+  <div class="pb-10">
+    <ImageMod
+      height={275}
+      width={360}
+      src={image}
+      alt={title}
+      class="rounded-xl w-full mx-auto"
+    />
+  </div>
+  <a href={slugSelector(`/${data.slug}`, lang)}>
+    <h3
+      class="h6 font-semibold pb-4 hover:text-primary transition duration-300"
+      set:html={plainify(title)}
+    />
+  </a>
+  <p class="mb-5 line-clamp-2" set:html={markdownify(description)} />
+  <div class="inline-block">
+    <a
+      class="btn btn-outline-primary"
+      href={slugSelector(`/${data.slug}`, lang)}
+    >
+      <span> Read More<span class="sr-only"> Details</span> </span>
+      <ArrowSVG />
+    </a>
+  </div>
+</div>

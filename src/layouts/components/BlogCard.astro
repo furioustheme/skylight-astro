@@ -1,0 +1,89 @@
+---
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import dateFormat from "@/lib/utils/dateFormat";
+import { getLangFromUrl, slugSelector } from "@/lib/utils/languageParser";
+import {
+  humanize,
+  markdownify,
+  plainify,
+  slugify,
+} from "@/lib/utils/textConverter";
+import { FaCalendar } from "react-icons/fa6";
+import ImageMod from "./ImageMod.astro";
+
+const { data } = Astro.props;
+const { title, image, date, author, categories } = data.data;
+const lang = getLangFromUrl(Astro.url);
+
+const slugParts = data.slug.split("/");
+slugParts[0] = "blog";
+const modifiedSlug = slugParts.join("/");
+data.slug = modifiedSlug;
+---
+
+<div class="bg-white shadow rounded-xl overflow-hidden h-full group">
+  <div class="w-full overflow-hidden">
+    {
+      image && (
+        <ImageMod
+          width={440}
+          height={300}
+          src={image}
+          alt={title}
+          class="w-full group-hover:scale-110 transition duration-300"
+          format="webp"
+        />
+      )
+    }
+  </div>
+  <div class="p-6">
+    <div class="flex items-center flex-wrap gap-2 sm:gap-5 pb-5">
+      {
+        categories.slice(0, 1).map((category: string, index: number) => (
+          <a
+            class="bg-secondary text-dark/80 hover:text-primary transition duration-300 rounded-3xl px-5 py-1 text-sm font-medium"
+            href={slugSelector(`/categories/${slugify(category)}`, lang)}
+          >
+            {humanize(category)}
+            {index !== categories.length - 1 && ","}
+          </a>
+        ))
+      }
+
+      {
+        date && (
+          <div class="flex items-center gap-2">
+            <FaCalendar size={14} className="-mt-1" />
+            <p>{dateFormat(date)}</p>
+          </div>
+        )
+      }
+    </div>
+    <h3 class="h5 mb-3">
+      <a
+        class="hover:text-primary transition duration-300 inline-block"
+        href={slugSelector(`/${data.slug}`, lang)}
+        set:html={plainify(title)}
+      />
+    </h3>
+    <div class="flex items-center gap-2 pb-6">
+      <ImageMod src="/images/avatar.png" width={28} height={28} alt="avatar" />
+
+      <p class="title-colored-author" set:html={markdownify(author)} />
+    </div>
+    <p class="mb-8 line-clamp-3">{humanize(data.body)}</p>
+    <div class="inline-block pb-2">
+      <a
+        class="btn btn-outline-primary"
+        href={slugSelector(`/${data.slug}`, lang)}
+      >
+        <span>
+          <span>
+            Learn More<span class="sr-only"> Details</span>
+          </span>
+        </span>
+        <ArrowSVG />
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,206 @@
+---
+import JobOpeningTab from "@/helpers/JobOpeningTab";
+import Base from "@/layouts/Base.astro";
+import { getListPage, getSinglePage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import FAQ from "@/partials/FAQ.astro";
+import PageHeader from "@/partials/PageHeader.astro";
+import Testimonial from "@/partials/Testimonial.astro";
+import { Icon } from "astro-icon/components";
+import type { ContentEntryMap } from "astro:content";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+const { lang } = Astro.params;
+const careersIndex = await getListPage(
+  "careers",
+  lang as keyof ContentEntryMap,
+);
+
+const {
+  title,
+  gallery_section,
+  impact_section,
+  benefits_section,
+  current_openings_section,
+} = careersIndex[0].data;
+
+const careers = await getSinglePage("careers", lang as keyof ContentEntryMap);
+const departments = careers
+  .flatMap((item) => item.data.department)
+  .filter((value, index, self) => self.indexOf(value) === index);
+---
+
+<Base {...careersIndex[0].data}>
+  <PageHeader title={title} />
+
+  <section class="section pb-0">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="md:col-10 pb-14">
+          <h1
+            class="text-center pb-4"
+            data-aos="fade-up"
+            data-aos-delay="100"
+            set:html={markdownify(gallery_section.title)}
+          />
+          <p
+            class="text-center"
+            data-aos="fade-up"
+            data-aos-delay="150"
+            set:html={markdownify(gallery_section.description)}
+          />
+        </div>
+      </div>
+
+      <div
+        class="sm:columns-2 lg:columns-3 gap-5"
+        data-aos="fade-up"
+        data-aos-delay="200"
+      >
+        {
+          gallery_section.images.map((item: { src: string; alt: string }) => (
+            <img
+              class="w-full object-cover aspect-video mb-5 rounded-xl"
+              src={item.src}
+              alt={item.alt}
+            />
+          ))
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- missing and impact section  -->
+  <section class="section pb-0 mx-4">
+    <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+      <div class="container z-10">
+        {
+          impact_section?.map(
+            (section: {
+              title: string;
+              description: string;
+              image: string;
+              list_items: string[];
+            }) => (
+              <div class="row g-4 xl:gx-5 gy-5 justify-between items-center investment-container">
+                <div class="lg:col-6" data-aos="fade-right">
+                  <h2 class="h1 pb-4" set:html={markdownify(section.title)} />
+                  <p
+                    class="pb-10"
+                    set:html={markdownify(section.description)}
+                  />
+                  {section.list_items?.length > 0 && (
+                    <ul class="list-disc list-outside ml-5 marker:text-primary">
+                      {section.list_items.map((item: string) => (
+                        <li
+                          class="pb-5 last:pb-0"
+                          set:html={markdownify(item)}
+                        />
+                      ))}
+                    </ul>
+                  )}
+                </div>
+                <div class="lg:col-6" data-aos="fade-left">
+                  <img
+                    src={section.image}
+                    alt={section.title}
+                    class="w-full rounded-xl"
+                  />
+                </div>
+              </div>
+            ),
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- benefits and perks section  -->
+  <section class="section pb-0">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="md:col-10 pb-24 text-center">
+          <h2
+            class="h1 pb-4"
+            data-aos="fade-up"
+            set:html={markdownify(benefits_section.title)}
+          />
+          <p
+            class="text-balance"
+            data-aos="fade-up"
+            data-aos-delay="50"
+            set:html={markdownify(benefits_section.description)}
+          />
+        </div>
+      </div>
+      <div
+        class="row colored-box-icon responsive-mb"
+        data-aos="fade-up"
+        data-aos-delay="100"
+      >
+        {
+          benefits_section?.benefits?.map(
+            (benefit: { title: string; icon: string; description: string }) => (
+              <div class="sm:col-6 lg:col-4 mb-16 sm:mb-14">
+                <div class="bg-body shadow rounded relative p-6 pb-10 h-full">
+                  <div class="p-2 rounded absolute top-[-30px] color-box color-text">
+                    <Icon name={benefit.icon} class={"w-10 h-10"} />
+                  </div>
+                  <h6
+                    class="pt-10 pb-5"
+                    set:html={markdownify(benefit.title)}
+                  />
+                  <p set:html={markdownify(benefit.description)} />
+                </div>
+              </div>
+            ),
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <!-- job openings  -->
+  {
+    current_openings_section.enable && (
+      <section class="section mx-4 pb-0">
+        <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+          <div class="container z-10 relative">
+            <div class="row justify-center">
+              <div class="md:col-10 pb-8 text-center">
+                <h2
+                  class="h1 pb-4"
+                  data-aos="fade-up"
+                  set:html={markdownify(current_openings_section.title)}
+                />
+                <p
+                  class="max-w-3xl mx-auto"
+                  data-aos="fade-up"
+                  data-aos-delay="50"
+                  set:html={markdownify(current_openings_section.description)}
+                />
+              </div>
+            </div>
+            <JobOpeningTab
+              client:load
+              departments={departments}
+              jobs={careers}
+              lang={lang as keyof ContentEntryMap}
+            />
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <Testimonial numToShow={3} />
+  <FAQ />
+  <CallToAction />
+</Base>

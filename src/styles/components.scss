@@ -1,0 +1,181 @@
+// section style
+.section {
+  @apply py-20 lg:py-24 2xl:py-32;
+  &-sm {
+    @apply py-16 xl:py-20;
+  }
+}
+
+// container
+.container {
+  @apply mx-auto max-w-[1320px] px-5 sm:px-10 2xl:px-0;
+}
+
+// form style
+.form-input {
+  @apply w-full rounded border-transparent bg-theme-light px-6 py-4 text-dark placeholder:text-light focus:border-primary focus:ring-transparent;
+}
+
+.form-label {
+  @apply mb-2 block font-secondary text-xl font-normal text-dark;
+}
+
+// social icons
+.social-icons {
+  @apply flex gap-x-5 gap-y-2 flex-wrap;
+  li {
+    @apply inline-block;
+    a {
+      @apply flex h-10 w-10 items-center justify-center rounded-full bg-primary/30 hover:bg-primary transition duration-300 text-center leading-9 text-body;
+      svg {
+        @apply h-5 w-5;
+      }
+    }
+  }
+}
+
+.social-icons-secondary {
+  @apply flex gap-x-5 gap-y-2 flex-wrap;
+  li {
+    @apply inline-block;
+    a {
+      @apply flex h-9 w-9 items-center justify-center rounded-full bg-body shadow hover:bg-primary transition duration-300 text-center leading-9 hover:text-body text-primary;
+      svg {
+        @apply h-5 w-5;
+      }
+    }
+  }
+}
+
+.social-icons-outline {
+  @apply flex gap-x-5 gap-y-2 flex-wrap;
+  li {
+    @apply inline-block;
+    a {
+      @apply flex h-9 w-9 items-center justify-center border border-dark rounded-full bg-transparent hover:bg-dark transition duration-300 text-center leading-9 text-dark hover:text-body;
+      svg {
+        @apply h-5 w-5;
+      }
+    }
+  }
+}
+
+// tab
+.tab {
+  @apply overflow-hidden;
+  &-nav {
+    @apply flex flex-wrap justify-center border py-6 rounded-lg w-fit mx-auto;
+    @apply list-none #{!important};
+
+    &-item {
+      @apply lg:min-w-44 flex flex-wrap whitespace-nowrap items-center justify-center gap-2 cursor-pointer py-3 text-lg text-dark opacity-80 mx-2 my-1 lg:my-0;
+      @apply px-8 #{!important};
+
+      svg {
+        @apply text-primary;
+      }
+      &.active {
+        @apply bg-primary text-white opacity-100 rounded-md;
+        svg {
+          @apply text-white;
+        }
+      }
+    }
+    &-border {
+      @apply lg:border-r border-border last:border-r-0;
+    }
+  }
+  &-content {
+    &-panel {
+      @apply hidden py-0;
+      p {
+        @apply mb-0;
+      }
+      &.active {
+        @apply block;
+      }
+    }
+  }
+}
+
+.accordion {
+  @apply mb-6 overflow-hidden rounded-lg bg-white;
+  &-header {
+    @apply flex gap-6 w-full cursor-pointer text-left justify-between items-center p-5 sm:p-8 text-xl font-semibold font-secondary text-dark transition duration-300 leading-9;
+    &:hover {
+      @apply text-primary;
+    }
+  }
+  &-icon {
+    @apply h-[.8em] w-[.8em] rotate-[-90deg] transition-transform duration-200 shrink-0;
+  }
+  &-content {
+    @apply max-h-0 overflow-hidden px-5 sm:px-8 py-0 ;
+  }
+  &.active {
+    .accordion-icon {
+      @apply rotate-0;
+    }
+    .accordion-content {
+      @apply max-h-screen pb-5;
+    }
+  }
+}
+
+
+.copyright{
+  @apply container text-center text-dark;
+  p{
+    @apply text-sm text-white/80;
+    a{
+      @apply hover:text-primary underline transition duration-300;
+    }
+  }
+}
+
+.title-colored {
+  @apply text-balance;
+  h1 {
+    @apply mb-4 capitalize text-4xl lg:text-5xl xl:text-6xl leading-[44px] lg:leading-[64px] xl:leading-[76px] font-bold;
+    strong {
+      @apply leading-[44px] lg:leading-[64px] xl:leading-[76px];
+    }
+  }
+
+  h2 {
+    @apply pb-4;
+    strong {
+      @apply leading-[44px] lg:leading-[64px] xl:leading-[76px];
+    }
+  }
+}
+
+.title-colored-author {
+  @apply font-medium text-dark;
+  strong {
+    @apply text-primary;
+  }
+}
+
+// content style
+.content {
+  @apply prose max-w-none;
+  @apply prose-headings:mb-[.3em] prose-headings:mt-[.6em] prose-headings:text-dark;
+  @apply prose-h1:text-h1-sm md:prose-h1:text-h1;
+  @apply prose-h2:text-h2-sm md:prose-h2:text-h2;
+  @apply prose-h3:text-h3-sm md:prose-h3:text-h3;
+  @apply prose-img:max-w-full prose-img:rounded;
+  @apply prose-hr:border-border;
+  @apply prose-p:text-base prose-p:text-text;
+  @apply prose-blockquote:rounded-lg prose-blockquote:border prose-blockquote:border-l-[10px] prose-blockquote:border-primary prose-blockquote:bg-theme-light prose-blockquote:px-8 prose-blockquote:py-10 prose-blockquote:font-secondary prose-blockquote:text-2xl prose-blockquote:not-italic prose-blockquote:text-dark;
+  @apply prose-pre:rounded-lg prose-pre:bg-theme-light;
+  @apply prose-code:px-1 prose-code:text-primary;
+  @apply prose-strong:text-dark;
+  @apply prose-a:text-text prose-a:underline hover:prose-a:text-primary;
+  @apply prose-li:text-text;
+  @apply prose-table:relative prose-table:overflow-hidden prose-table:rounded-lg prose-table:before:absolute prose-table:before:left-0 prose-table:before:top-0 prose-table:before:h-full prose-table:before:w-full prose-table:before:rounded-[inherit] prose-table:before:border prose-table:before:content-[""];
+  @apply prose-thead:border-border prose-thead:bg-theme-light;
+  @apply prose-th:relative prose-th:z-10 prose-th:px-4 prose-th:py-[18px] prose-th:text-dark;
+  @apply prose-tr:border-border;
+  @apply prose-td:relative prose-td:z-10 prose-td:px-3 prose-td:py-[18px];
+}

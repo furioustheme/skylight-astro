@@ -1,0 +1,87 @@
+---
+import ImageMod from "@/components/ImageMod.astro";
+import { getLangFromUrl, slugSelector } from "@/lib/utils/languageParser";
+import { humanize, markdownify } from "@/lib/utils/textConverter";
+
+const { categories, allCategories, sortedPosts } = Astro.props;
+const lang = getLangFromUrl(Astro.url);
+---
+
+<div class="md:col-5 lg:col-4">
+  <div class="bg-theme-light px-5 py-10 rounded-xl">
+    <div class="mb-10">
+      <div class="relative my-10">
+        <span
+          class="absolute top-1/2 left-0 transform -translate-y-1/2 w-full h-[6px] mx-auto rounded-xl block bg-primary"
+        ></span>
+        <p
+          class="text-black text-2xl px-5 z-10 relative text-center bg-theme-light block mx-auto w-fit"
+        >
+          Recent Posts
+        </p>
+      </div>
+      {
+        sortedPosts.slice(0, 4).map((post: any) => {
+          const slugParts = post.slug.split("/");
+          slugParts[0] = "blog";
+          const modifiedSlug = slugParts.join("/");
+          post.slug = modifiedSlug;
+          return (
+            <div class="mt-5">
+              <a
+                href={slugSelector(`${post.slug}`, lang)}
+                class="text-dark hover:text-primary transition duration-300 line-clamp-2"
+              >
+                <div class="flex items-center gap-3">
+                  <ImageMod
+                    width={80 * 2}
+                    height={64 * 2}
+                    src={post.data.image}
+                    alt={post.data.title}
+                    class="w-20 h-16 object-cover rounded-md"
+                  />
+                  <span
+                    class="line-clamp-2"
+                    set:html={markdownify(post.data.title)}
+                  />
+                </div>
+              </a>
+            </div>
+          );
+        })
+      }
+    </div>
+
+    <div class="mb-10">
+      <div class="relative py-5">
+        <span
+          class="absolute top-1/2 left-0 transform -translate-y-1/2 w-full h-[6px] mx-auto rounded-xl block bg-primary"
+        ></span>
+        <p
+          class="text-black text-2xl px-5 z-10 relative text-center bg-theme-light block mx-auto w-fit"
+        >
+          Categories
+        </p>
+      </div>
+      <ul class="widget-list">
+        {
+          categories.map((category: string) => {
+            const count = allCategories.filter(
+              (c: string) => c === category,
+            ).length;
+            return (
+              <li>
+                <a
+                  class="flex justify-between items-center text-dark hover:text-primary transition duration-300 py-2"
+                  href={slugSelector(`/categories/${category}`, lang)}
+                >
+                  {humanize(category)} <span>({count})</span>
+                </a>
+              </li>
+            );
+          })
+        }
+      </ul>
+    </div>
+  </div>
+</div>

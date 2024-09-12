@@ -1,0 +1,62 @@
+---
+import CaseStudyCard from "@/components/CaseStudyCard.astro";
+import Base from "@/layouts/Base.astro";
+import { getListPage, getSinglePage } from "@/lib/contentParser.astro";
+import { supportedLang } from "@/lib/utils/languageParser";
+import { markdownify } from "@/lib/utils/textConverter";
+import CallToAction from "@/partials/CallToAction.astro";
+import PageHeader from "@/partials/PageHeader.astro";
+import type { ContentEntryMap } from "astro:content";
+
+export function getStaticPaths() {
+  const paths = supportedLang.map((lang) => ({
+    params: { lang: lang || undefined },
+  }));
+  return paths;
+}
+const { lang } = Astro.params;
+const caseStudiesIndex = await getListPage(
+  "case-studies",
+  lang as keyof ContentEntryMap,
+);
+
+const { title, case_studies } = caseStudiesIndex[0].data;
+
+const caseStudies = await getSinglePage(
+  "case-studies",
+  lang as keyof ContentEntryMap,
+);
+---
+
+<Base {...caseStudiesIndex[0].data}>
+  <PageHeader title={title} />
+  <section class="section pb-0">
+    <div class="container">
+      <div class="row justify-center">
+        <div class="md:col-8 pb-14 text-center">
+          <h1
+            class="pb-4"
+            data-aos="fade-up"
+            set:html={markdownify(case_studies?.title)}
+          />
+          <p
+            class="text-balance"
+            data-aos="fade-up"
+            data-aos-delay="100"
+            set:html={markdownify(case_studies?.description)}
+          />
+        </div>
+      </div>
+      <div class="row g-4" data-aos="fade-up" data-aos-delay="100">
+        {
+          caseStudies.map((study) => (
+            <div class="md:col-6 lg:col-4">
+              <CaseStudyCard data={study} />
+            </div>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+  <CallToAction />
+</Base>

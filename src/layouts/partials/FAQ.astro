@@ -1,0 +1,59 @@
+---
+import AccordionFAQ from "@/helpers/AccordionFAQ";
+import ArrowSVG from "@/helpers/svg/ArrowSVG";
+import { getSinglePage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+
+const faqsIndex = await getSinglePage(
+  "sections",
+  lang as keyof ContentEntryMap,
+  "faq",
+);
+
+const { enable, title, description, faqs, button } = faqsIndex[0].data;
+---
+
+{
+  enable && (
+    <section class="section pb-0 mx-4">
+      <div class="bg-shape-top-right py-20 lg:py-24 2xl:py-32">
+        <div class="container z-10 relative">
+          <div class="row justify-center">
+            <div class="md:col-10 pb-14">
+              <h2
+                class="h1 text-center pb-4"
+                data-aos="fade-up"
+                set:html={markdownify(title)}
+              />
+              <p
+                class="max-w-3xl mx-auto text-center"
+                data-aos="fade-up"
+                data-aos-delay="100"
+                set:html={markdownify(description)}
+              />
+            </div>
+          </div>
+
+          <div
+            class="md:columns-2 gap-x-6"
+            data-aos="fade-up"
+            data-aos-delay="200"
+          >
+            <AccordionFAQ data={faqs} client:load />
+          </div>
+
+          {button.enable && (
+            <div class="block w-fit mx-auto mt-14">
+              <a class="btn btn-primary" href={button.link}>
+                {button.label} <ArrowSVG />
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  )
+}

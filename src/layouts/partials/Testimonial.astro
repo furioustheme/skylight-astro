@@ -1,0 +1,68 @@
+---
+import QuoteSVG from "@/helpers/svg/QuoteSVG";
+import { getSinglePage } from "@/lib/contentParser.astro";
+import { markdownify } from "@/lib/utils/textConverter";
+import type { ContentEntryMap } from "astro:content";
+
+const { lang } = Astro.params;
+
+const testimonial = await getSinglePage(
+  "sections",
+  lang as keyof ContentEntryMap,
+  "testimonial",
+);
+
+const { enable, title, testimonials } = testimonial[0].data;
+
+const { numToShow } = Astro.props;
+
+const limitedTestimonials = numToShow
+  ? testimonials.slice(0, numToShow)
+  : testimonials;
+---
+
+{
+  enable && (
+    <section class="section pb-0">
+      <div class="container">
+        <h2
+          class="h1 text-center pb-14"
+          data-aos="fade-up"
+          set:html={markdownify(title)}
+        />
+        <div
+          class="md:columns-2 lg:columns-3"
+          data-aos="fade-up"
+          data-aos-delay="100"
+        >
+          {limitedTestimonials?.map((item: any) => (
+            <div class="break-inside-avoid">
+              <div class="p-5 sm:p-10 mb-5 border border-primary rounded-lg">
+                <p
+                  class="flex items-start gap-1 text-dark"
+                  style="margin-block-start: 1rem"
+                >
+                  <QuoteSVG />
+                  {item.quote}
+                </p>
+                <div class="flex items-center gap-3 pt-5">
+                  <img
+                    src={item.image}
+                    alt="people-img"
+                    width="60"
+                    height="60"
+                    class="rounded-xl"
+                  />
+                  <div>
+                    <p class="font-semibold text-dark">{item.author}</p>
+                    <p class="text-sm text-primary">{item.company}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
