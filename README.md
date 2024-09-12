@@ -1,7 +1,7 @@
 <h1 align=center>Skylight Astro</h1>
 <p align=center>Complete Website Solution for SaaS and Startup Businesses.
 </p>
-<h2 align="center"> <a target="_blank" href="https://skylight-astro.netlify.app/" rel="nofollow">👀Demo</a> | <a  target="_blank" href="https://pagespeed.web.dev/report?url=https%3A%2F%skylight-astro.netlify.app%2F&form_factor=desktop">Page Speed (100%)🚀</a>
+<h2 align="center"> <a target="_blank" href="https://skylight-astro.netlify.app/" rel="nofollow">👀Demo</a> | <a  target="_blank" href="https://pagespeed.web.dev/analysis/https-skylight-astro-netlify-app/k6i0m8ojtg?form_factor=desktop">Page Speed (100%)🚀</a>
 </h2>
 
 [![skylight-astro](https://furioustheme.com/products/skylight.png)](https://furioustheme-skylight-astro.netlify.app/)
@@ -12,7 +12,7 @@ Skylight offers everything you need to effortlessly create a professional, moder
 
 - 📄 10+ Unique Pages
 - ✨ Highly customizable (Color, Font, Menu, Social Links, SEO Meta Tags, etc.)
-- ⚡ Google PageSpeed Score 95/100 (Desktop)
+- ⚡ Google PageSpeed Score 99/100 (Desktop)
 - ⚙️ Netlify & Vercel Configured
 - 📬 Contact Form Support
 - 💰 Pricing Table
